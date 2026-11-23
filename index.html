@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is It Worth It?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a weekly-leader page for executives: confident, plain, every figure earns its place.
+   IDEA: the valuation equation is the masthead; every page is one piece of it.
+   PICTURE: the equation itself, live and clickable, then working labs (NPV profile, sliders).
+   COLOUR and TYPE: white and ink, red for "you are here", slate for data; Source Serif 4 + Inter.
+   LAYOUT: sticky lecture strip, full-width bands, labs as two-column figure + controls, stacking under 760px. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#10191e);--ink:light-dark(#121212,#eef2f4);--mute:light-dark(#5b6670,#9fb0ba);
+--red:light-dark(#e3120b,#ff5a4f);--slate:light-dark(#2e6f8e,#7cc0dd);--panel:light-dark(#e3ecf0,#18262e);
+--panel2:light-dark(#f3f7f9,#142028);--rule:light-dark(#c9d5db,#2a3b45);--good:light-dark(#1d7a46,#5fd08f);--bad:light-dark(#b3261e,#ff7b72)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}html{scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;font-weight:600;line-height:1.1;text-wrap:balance;margin:0 0 .4em}
+h1{font-size:clamp(32px,5vw,50px)}h2{font-size:clamp(24px,3vw,32px)}h3{font-size:20px}
+p{margin:0 0 1em;max-width:68ch}a{color:var(--slate)}
+.band{padding:clamp(28px,4vw,56px) max(5vw,16px,calc((100% - 1240px)/2))}.band.alt{background:var(--panel2)}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--rule)}
+.top .in{display:flex;gap:18px;align-items:center;padding:0 max(5vw,16px);max-width:1340px;margin:auto}
+.brand{font-family:"Source Serif 4",serif;font-weight:600;white-space:nowrap;display:flex;gap:8px;align-items:center;text-decoration:none;color:var(--ink)}
+.brand i{width:14px;height:14px;background:var(--red);display:inline-block}
+.scroll{overflow-x:auto;scrollbar-width:thin}
+nav.scroll{display:flex;gap:2px;flex:1}
+nav a{flex:none;padding:14px 10px;text-decoration:none;color:var(--mute);font-size:14px;border-bottom:3px solid transparent;white-space:nowrap}
+nav a b{font-weight:500;color:var(--ink);margin-right:4px}
+nav a.on{color:var(--ink);border-color:var(--red)}
+.page{display:none}.page.on{display:block}
+.lede{font-size:19px;color:var(--mute);max-width:62ch}
+.kicker{font-size:14px;color:var(--mute);margin-bottom:8px}.kicker b{color:var(--red);font-weight:600}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:980px){.g4,.g5{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.g2,.g4,.g5{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--bg);border:1px solid var(--rule);padding:18px}
+.card.panel{background:var(--panel);border-color:transparent}
+.card h3{margin-bottom:.3em}.card p:last-child{margin-bottom:0}
+.eq{font-family:"Source Serif 4",serif;display:inline-flex;align-items:center;gap:.25em;flex-wrap:wrap;font-size:22px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15em;line-height:1.15}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .2em}.fr>span:last-child{padding:0 .2em}
+.sig{display:inline-flex;flex-direction:column;align-items:center;line-height:.9;font-size:.55em;vertical-align:middle}.sig b{font-size:2em;font-weight:400}
+.pc{border-radius:4px;padding:0 .12em;transition:background .2s,color .2s}
+.pc.hl{background:var(--red);color:#fff}
+.hero-eq .eq{font-size:inherit}.hero-eq{font-size:clamp(28px,5.4vw,62px);display:flex;justify-content:center;padding:10px 0 6px}
+.qcard{cursor:pointer;border-top:4px solid var(--rule);transition:border-color .2s}
+.qcard:hover,.qcard:focus-within{border-top-color:var(--red)}
+.qcard .tag{font-family:"Source Serif 4",serif;font-size:22px;color:var(--red)}
+.qcard ul{margin:.4em 0 0;padding:0;list-style:none}.qcard li{margin:.2em 0}
+.qcard li a{text-decoration:none;color:var(--ink)}.qcard li a:hover{color:var(--red)}
+.num{display:inline-block;min-width:1.6em;color:var(--mute);font-variant-numeric:tabular-nums}
+.youare{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:14px 0 4px;font-size:14px;color:var(--mute)}
+.youare .eq{font-size:24px;color:var(--ink);padding:6px 12px;background:var(--panel)}
+.tree{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-block;padding:2px 9px;border:1px solid var(--rule);font-size:13px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.go{color:var(--good);font-weight:600}.no{color:var(--bad);font-weight:600}
+button,.btn{font:inherit;font-size:15px;min-height:44px;padding:8px 16px;border:1px solid var(--ink);background:var(--bg);color:var(--ink);cursor:pointer}
+button.pri{background:var(--ink);color:var(--bg)}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+button.sm{min-height:36px;padding:4px 12px;font-size:14px}
+input,select{font:inherit;font-size:16px;min-height:44px;padding:6px 10px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);width:100%}
+input[type=range]{padding:0;border:0;min-height:32px;accent-color:var(--red)}
+label{font-size:14px;color:var(--mute);display:block}
+.lab{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start}
+@media(max-width:760px){.lab{grid-template-columns:minmax(0,1fr)}}
+.fig{position:relative;min-height:340px;background:var(--bg);border:1px solid var(--rule)}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.fig.short{min-height:260px}
+svg text{font-family:Inter,sans-serif;font-size:12px;fill:var(--mute)}
+.cfrows{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;align-items:center}
+.cfrows span{font-size:14px;color:var(--mute);white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:12px}
+.stats div{background:var(--bg);padding:10px 12px}.stats small{display:block;color:var(--mute);font-size:13px}
+.stats strong{font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.big{font-family:"Source Serif 4",serif;font-size:clamp(40px,6vw,64px);line-height:1;font-variant-numeric:tabular-nums}
+.note{border-left:4px solid var(--red);padding:10px 14px;background:var(--panel2);border-radius:0;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:15px}
+th,td{padding:6px 10px;border-bottom:1px solid var(--rule);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}
+th{font-weight:500;color:var(--mute);font-size:13px}
+details{border-top:1px solid var(--rule);padding:8px 0}summary{cursor:pointer;font-weight:500;min-height:32px}
+.pros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;font-size:14px}.pros ul{margin:.3em 0;padding-left:1.1em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ok{color:var(--good);font-weight:600}.err{color:var(--bad);font-size:13px}
+.ans{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:14px 0}
+@media(max-width:860px){.ans{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mark{font-size:13px;min-height:1.3em}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;border-color:var(--rule)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--bg))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.steps{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin:16px 0}
+.steps .st{flex:1 1 150px;padding:18px 14px;text-align:center;border:1px solid var(--rule);font-family:"Source Serif 4",serif;font-size:20px;display:flex;align-items:center;justify-content:center;min-height:90px}
+.steps .st.first{background:var(--red);color:#fff;border-color:var(--red)}
+.steps .ar{align-self:center;color:var(--mute);font-size:22px}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--rule)}.dots i.on{background:var(--red)}
+.bar{height:26px;background:var(--panel);position:relative}.bar>i{position:absolute;inset:0 auto 0 0;background:var(--slate);transition:width .25s}
+.lex{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:15px}.lex .chip{font-size:15px;padding:6px 12px}
+.stub{border:1px dashed var(--rule);padding:16px;background:var(--panel2)}
+footer{font-size:13px;color:var(--mute)}
+@media(prefers-reduced-motion:no-preference){#arrowsSvg .fx path{animation:flick .7s ease-in-out infinite alternate}#arrowsSvg .fl2{animation-duration:.5s!important}#arrowsSvg .fl3{animation-duration:.4s!important}#arrowsSvg .f1 path{animation-delay:.2s}#arrowsSvg .f2 path{animation-delay:.35s}}
+@keyframes flick{from{opacity:1}to{opacity:.72}}
+.learn+.learn{margin-top:56px;padding-top:40px;border-top:1px solid var(--rule)}
+.fig.tall{min-height:440px}
+.tdbu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;border:1px solid var(--rule);padding:18px}@media(max-width:600px){.tdbu{grid-template-columns:minmax(0,1fr)}}
+.tdh{font-weight:600;margin-bottom:10px}.fun{display:flex;flex-direction:column;align-items:center;gap:6px}.fun div{background:var(--slate);color:#fff;text-align:center;padding:8px 6px;font-weight:600;font-size:14px}.fun small{display:block;font-weight:400;opacity:.85;font-size:13px}
+.bu{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:4px;font-size:13px}.bu b{font-weight:500;color:var(--mute);align-self:center}.bu span{background:var(--panel);text-align:center;padding:8px 2px;font-variant-numeric:tabular-nums}.bu .tot{grid-column:1/-1;background:var(--red);color:#fff;text-align:center;padding:8px;font-weight:600;margin-top:4px}
+.rq{border:1px solid var(--rule);padding:20px}.rqbar{display:flex;height:54px;background:var(--panel2)}.rqbar i{display:block;height:100%;border-right:2px solid var(--bg);transition:width .3s}.rqtot{margin:12px 0;font-size:18px}
+.rqleg{list-style:none;padding:0;margin:0;display:grid;gap:6px}.rqleg li{display:flex;align-items:center;gap:8px;font-size:15px}.rqleg span{width:14px;height:14px;display:inline-block}.rqleg b{margin-left:auto;font-variant-numeric:tabular-nums}
+.rqbrace{display:flex;gap:4px;margin-top:14px;font-size:13px;color:var(--mute)}.rqbrace span{border-top:2px solid var(--mute);padding-top:4px;text-align:center}
+.sortl{display:grid;gap:10px}.sorti{border:1px solid var(--rule);padding:12px 14px;background:var(--bg)}.sorti p{margin:0 0 8px}.sorti .why{margin:8px 0 0;font-size:14px}.sorti .why:empty{display:none}
+.sorti button.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}.sorti button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--bg))}
+.dt{width:auto;margin:8px 0}.dt td{padding:6px 14px 6px 0;border:0;border-bottom:1px solid var(--rule)}
+.pic{margin:0}.pic figcaption{font-size:14px;color:var(--mute);margin-top:8px;max-width:70ch}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--ink)}.seg button{border:0;min-height:36px;font-size:14px}.seg button.on{background:var(--ink);color:var(--bg)}
+.mx td,.mx th{text-align:center;white-space:normal}.mx td:first-child,.mx th:first-child{text-align:left;font-weight:500}
+.mx .y{color:var(--good);font-weight:700;font-size:20px}.mx .n{color:var(--bad);font-weight:700;font-size:20px}.mx .p{color:var(--mute);font-size:13px;font-weight:600}
+.mx tr.best td{background:color-mix(in srgb,var(--good) 9%,var(--bg))}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(max-width:600px){table{font-size:13px}th,td{padding:5px 6px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="brand" href="#home"><i></i>Is It Worth It?</a>
+  <nav class="scroll" id="nav"></nav>
+</div></header>
+
+<!-- ============ HOME ============ -->
+<section class="page" id="p-home">
+  <div class="band">
+    <div class="kicker">Executive MBA · Corporate finance review</div>
+    <h1 style="font-size:clamp(44px,8vw,92px)">Is it worth it?</h1>
+    <p class="lede">Should we buy the bond at this price? The stock? Launch the project, sign the free agent, acquire the company? Every decision in this course is the same question. Finance answers it with one equation, and <strong>it is worth it when value exceeds the price you pay.</strong></p>
+    <div class="hero-eq"><span class="eq" id="heroEq"></span></div>
+    <p class="lede" style="margin-inline:auto;text-align:center">Value starts with what an asset does for you; for financial assets, that is cash. To put a number on it you need four more answers. Pick a piece of the equation to see which lectures supply it, or follow the semester in order from the strip above.</p>
+    <div class="grid g5" id="qcards" style="margin-top:22px"></div>
+  </div>
+  <div class="band alt">
+    <h2>Then ask the question for real</h2>
+    <p>Bonds, stocks and projects are all judged with the same equation. Only the cash flows, horizon and risk change.</p>
+    <div class="grid g3" id="appcards"></div>
+  </div>
+  <div class="band">
+    <div class="grid g2" style="align-items:center">
+      <div>
+        <div class="kicker"><b>Prologue</b> · Finance: the friend we all love to hate</div>
+        <h2>Is finance really the villain?</h2>
+        <p>Politicians, the press and Hollywood love to cast finance as the bad guy. Surveys back it up: in one, 48% of American adults said the financial system hurts the economy and only 34% said it helps. Even 57% of <i>Economist</i> readers doubted that financial innovation boosts growth (Zingales, 2015).</p>
+        <p>Strip away the caricature and finance is something simpler: <strong>the study of the optimal allocation of scarce financial resources.</strong> It decides how capital is procured, deployed and distributed. A robust, efficient financial system makes specialization and exchange possible, and that is where progress comes from.</p>
+        <p>Allocating scarce capital well means asking, again and again, <strong>is it worth it?</strong></p>
+        <div class="tree" style="margin-top:6px"><span class="chip on">Finance</span><span class="chip">Procurement</span><span class="chip">Deployment</span><span class="chip">Distribution</span></div>
+      </div>
+      <figure style="margin:0">
+        <svg viewBox="0 0 600 380" width="100%" role="img" aria-labelledby="vcT"><title id="vcT">The virtuous cycle: capital flows from financiers to assets to revenue and back</title>
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9" fill="none" stroke="currentColor" stroke-width="1.6"/></marker></defs>
+          <g id="vc" style="color:var(--mute)"></g>
+        </svg>
+        <figcaption style="font-size:13px;color:var(--mute)">The virtuous cycle. What is left after plowback is the free cash flow to the firm, the cash flow every valuation in this course is built on.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="band alt" id="lecture-0">
+    <div class="kicker"><b>Lecture 0</b> · The basics of asset valuation</div>
+    <h2>What drives the value of any asset?</h2>
+    <div id="chain"></div>
+    <div class="row"><button class="sm" id="chPrev">Back</button><button class="sm pri" id="chNext">Next</button><div class="dots" id="chDots"></div></div>
+  </div>
+  <div class="band">
+    <div class="kicker" id="arrows-0"><b>Lecture 0</b> · Why future cash flows are worth less</div>
+    <h2>Every future cash flow is under attack</h2>
+    <p>A dollar promised later is worth less than a dollar in hand, for three reasons. <strong>Inflation</strong> erodes what it will buy. <strong>Opportunity cost</strong>: money tied up here can’t earn a return somewhere else. <strong>Uncertainty</strong>: the cash may not show up at all. Nothing stops these arrows. <strong>Estimating present value is how we acknowledge them</strong>: the discount rate <i>r</i> puts a price on all three, so what a future cash flow is worth today already reflects the damage.</p>
+    <figure class="pic" style="margin-top:8px">
+      <svg id="arrowsSvg" viewBox="0 0 960 400" width="100%" role="img" aria-label="Three flaming arrows labeled inflation, opportunity cost and uncertainty strike a pile of future cash flows; discounting brings what is left to a smaller present value"></svg>
+      <figcaption>r = real return (opportunity cost) + expected inflation + risk premium (uncertainty). You will meet this decomposition again with bonds (Lecture 4) and the cost of capital (Lecture 9).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CAPITAL BUDGETING ============ -->
+<section class="page" id="p-capital-budgeting">
+  <div class="band">
+    <div class="kicker"><b>Lecture 6</b> · Applying the whole equation</div>
+    <h1>Capital budgeting: is the project worth it?</h1>
+    <div class="note" style="max-width:760px"><strong>Is it worth it?</strong> A project is worth it when the present value of what it returns exceeds what it costs. That is NPV &gt; 0.</div>
+    <div class="youare"><span>You are here</span><span class="eq" data-eq="all"></span><span class="tree"><span class="chip">Deployment</span>→<span class="chip on">Go/no-go decisions</span></span></div>
+    <p class="lede">Go/no-go decisions involve a large initial outlay that creates positive cash flows later. The outlay is the cost and the future cash flows are the benefit, so every go/no-go decision is a valuation exercise. <strong>Does the value of the future cash flows exceed the cost?</strong></p>
+    <figure class="pic" style="max-width:820px;margin-top:10px"><svg id="lexSvg" viewBox="0 0 680 190" width="100%" role="img" aria-label="Investor gives capital to a corporation and expects a return; one rate goes by four names"></svg>
+    <figcaption>One rate, four names. What the investor requires is exactly what the corporation must earn on the money: the hurdle the project has to clear.</figcaption></figure>
+  </div>
+
+  <div class="band alt">
+    <div class="kicker"><b>Picture it</b> · NPV is a weigh-in</div>
+    <h2>Bring every cash flow back to today, then weigh it against the cost</h2>
+    <div class="lab">
+      <figure class="pic"><div class="fig"><svg id="npvPic" role="img" aria-label="Future cash flows shrink to present values and stack up against the initial cost"></svg></div>
+      <figcaption>Right: each year’s cash flow (outline) shrinks to its present value (solid) as it travels back to today. Left: those present values stack up, shade for shade, beside the cost. The gap between the two columns is the NPV.</figcaption></figure>
+      <div class="card">
+        <label for="npR">Discount rate <strong id="npROut" style="color:var(--ink)"></strong></label>
+        <input type="range" id="npR" min="0" max="30" step="0.5" value="10">
+        <div class="big" id="npOut" style="margin-top:12px"></div><small style="color:var(--mute)">NPV of the simple project: −$50,000 today, then $15K, $18K, $20K, $12K, $8K</small>
+        <p style="font-size:15px;margin-top:14px">Slide the rate up. Later cash flows shrink fastest because they are discounted more times. Somewhere near 15.6% the stack exactly matches the cost: that rate is the IRR.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="band">
+    <h2>The five tools</h2>
+    <div class="grid g5" id="tools"></div>
+    <h3 style="margin-top:28px">The tools at a glance</h3>
+    <div class="scroll"><table class="mx" style="min-width:620px"><thead><tr><th>Tool</th><th>Uses time value</th><th>Uses every cash flow</th><th>Answer in dollars of value</th><th>Always one answer</th><th>Ranks competing projects correctly</th></tr></thead><tbody id="mx"></tbody></table></div>
+    <p style="font-size:13px;color:var(--mute);margin-top:6px"><span class="y">✓</span> yes · <span class="n">✗</span> no · <span class="p">partly</span> = only sometimes. NPV is the only row that is green all the way across, which is why it is the gold standard.</p>
+    <div class="note" style="margin-top:18px"><strong>Excel's NPV function glitch.</strong> <code>=NPV(rate, values)</code> treats the first value as arriving at the end of year 1. If you include the time-0 outlay in the range, it gets discounted one period too many. Use <code>=NPV(r, CF1:CFn) + CF0</code>.</div>
+  </div>
+
+  <div class="band alt">
+    <div class="kicker"><b>Picture it</b> · Payback is a climb out of a hole</div>
+    <h2>How long until you are back to zero?</h2>
+    <div class="row" style="margin-bottom:12px"><div class="seg" role="group" aria-label="Cash flow basis"><button class="on" data-pb="0">Cash flows</button><button data-pb="1">Discounted at 10%</button></div></div>
+    <figure class="pic"><div class="fig"><svg id="pbPic" role="img" aria-label="Cumulative cash flow climbing from below zero; payback where it crosses zero"></svg></div>
+    <figcaption>Each column is the running total after that year. Payback is where the climb crosses zero. Switch to discounted and every step is shorter, so the crossing comes later. Everything after the crossing is grey because neither payback rule ever looks at it.</figcaption></figure>
+  </div>
+
+  <div class="band">
+    <div class="kicker"><b>Lab 1</b> · NPV profile</div>
+    <h2>Watch the decision change as the hurdle rate moves</h2>
+    <p>Edit the cash flows or load a case. The curve is NPV at every discount rate. Where it crosses zero is the IRR, and the red line is your hurdle rate.</p>
+    <div class="row" style="margin-bottom:12px" id="presets"></div>
+    <div class="lab">
+      <div>
+        <div class="fig"><svg id="profSvg" role="img" aria-label="NPV profile chart"></svg></div>
+        <div class="stats" id="labStats"></div>
+      </div>
+      <div class="card panel">
+        <label for="hr">Hurdle rate <strong id="hrOut" style="color:var(--ink)"></strong></label>
+        <input type="range" id="hr" min="0" max="40" step="0.25" value="10">
+        <div class="cfrows" id="cfRows" style="margin-top:10px"></div>
+        <div class="row" style="margin-top:10px"><button class="sm" id="addYr">Add year</button><button class="sm" id="rmYr">Remove year</button></div>
+        <div id="verdicts" style="margin-top:14px;font-size:15px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="kicker"><b>Lab 2</b> · Mutually exclusive projects</div>
+    <h2>When IRR and NPV disagree, follow NPV</h2>
+    <div class="lab">
+      <div>
+        <div class="fig short"><svg id="abSvg" role="img" aria-label="NPV profiles of Projects A and B"></svg></div>
+      </div>
+      <div class="card">
+        <table><thead><tr><th>Year</th><th>A</th><th>B</th></tr></thead><tbody id="abTbl"></tbody></table>
+        <label for="abR" style="margin-top:12px">Discount rate <strong id="abROut" style="color:var(--ink)"></strong></label>
+        <input type="range" id="abR" min="0" max="30" step="0.25" value="8">
+        <div id="abMsg" style="font-size:15px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band">
+    <div class="grid g2">
+      <div>
+        <div class="kicker"><b>Case</b> · Non-conventional cash flows</div>
+        <h2>The Utah Jazz free agent</h2>
+        <p>You are the GM weighing a power forward who wants a big signing bonus and an eight-year deal. He should fill seats for about three great years, then the contract becomes a drag. At a 12% hurdle the NPV is negative, yet the project has <strong>two IRRs, both above 12%</strong>. IRR alone would have you sign him.</p>
+        <p>Modified IRR fixes the problem by removing the sign changes before solving. All three approaches land below 12%, consistent with the negative NPV.</p>
+        <button class="pri" id="loadJazz">Load the Jazz contract in Lab 1</button>
+      </div>
+      <div class="card panel">
+        <h3>Three ways to modify IRR</h3>
+        <p style="font-size:15px"><strong>#1 Discounting:</strong> discount all negative cash flows to time 0 at r, then solve for IRR.<br><strong>#2 Reinvestment:</strong> compound all cash flows after time 0 to the end at r, then solve.<br><strong>#3 Combination:</strong> discount negatives to time 0 and compound positives to the end. This is what Excel's <code>MIRR</code> does.</p>
+        <table><thead><tr><th>Jazz contract, r = 12%</th><th>Rate</th></tr></thead><tbody id="jazzT"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="band alt">
+    <div class="kicker"><b>Practice</b> · New numbers every time</div>
+    <h2>Evaluate the project</h2>
+    <div id="pq"></div>
+    <div class="ans">
+      <div><label for="aPb">Payback (years)</label><input id="aPb" inputmode="decimal"><div class="mark" id="mPb"></div></div>
+      <div><label for="aDpb">Discounted payback</label><input id="aDpb" inputmode="decimal"><div class="mark" id="mDpb"></div></div>
+      <div><label for="aNpv">NPV ($)</label><input id="aNpv" inputmode="decimal"><div class="mark" id="mNpv"></div></div>
+      <div><label for="aIrr">IRR (%)</label><input id="aIrr" inputmode="decimal"><div class="mark" id="mIrr"></div></div>
+      <div><label for="aDec">Decision</label><select id="aDec"><option value="">Choose</option><option value="go">Go</option><option value="no">No go</option></select><div class="mark" id="mDec"></div></div>
+    </div>
+    <div class="row"><button class="pri" id="chk">Check answers</button><button id="sol">Show solution</button><button id="newP">New problem</button><span id="score" style="color:var(--mute);font-size:14px"></span></div>
+    <div id="solBox" style="margin-top:16px"></div>
+    <p style="font-size:13px;color:var(--mute);margin-top:10px">Interpolate fractional payback years. NPV is accepted within 0.5% or $5, IRR within 0.1 points, payback within 0.02 years.</p>
+  </div>
+
+  <div class="band">
+    <div class="kicker"><b>Concept check</b></div>
+    <h2>Which tool, and why?</h2>
+    <div class="card" style="max-width:760px">
+      <div class="row" style="justify-content:space-between"><span id="qN" style="color:var(--mute);font-size:14px"></span><span id="qS" style="color:var(--mute);font-size:14px"></span></div>
+      <h3 id="qQ" style="font-family:Inter,sans-serif;font-weight:500;font-size:18px;line-height:1.4;margin-top:8px"></h3>
+      <div id="qO"></div>
+      <p id="qE" style="font-size:15px;margin-top:10px"></p>
+      <button class="pri" id="qNext">Next question</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTLINE PAGES (rendered from data) ============ -->
+<div id="stubs"></div>
+
+<div class="band"><footer>Built from the course lecture slides. Illustrative numbers are labeled where they are not from the slides.</footer></div>
+
+<script>
+{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fr=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const fmt=(x,d=0)=>(x<0?'−':'')+'$'+Math.abs(x).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=(x,d=2)=>(x*100).toFixed(d)+'%';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- equation component ---------- */
+function eqHTML(hl,hero){
+  const h=k=>hl==='all'||(Array.isArray(hl)&&hl.includes(k))?' hl':'';
+  return (hero?`<span class="pc" data-k="v">Value</span> = <span class="pc" data-k="v">F(E[utility])</span> = `:'Value = ')+`<span class="sig"><span class="pc${h('T')}" data-k="T">T</span><b>Σ</b><span>t=1</span></span>`+
+   fr(`<span class="pc${h('fc')}" data-k="fc">E</span>[<span class="pc${h('cf')}" data-k="cf">CF<sub>t</sub></span>]`,
+      `(1 + <span class="pc${h('r')}" data-k="r">r</span>)<sup>t</sup>`);
+}
+
+/* ---------- course data ---------- */
+const Q={v:{tag:'Value',q:'What is value?',d:'Value is a function of expected utility. A financial asset offers only one kind of utility, future cash flows, so its value is the present value of those cash flows.'},cf:{tag:'CF',q:'What cash flows?',d:'Which cash flows belong in a valuation, and how to measure them.'},
+ fc:{tag:'E[ ]',q:'How do we forecast?',d:'Turning a sales forecast into expected future cash flows, and handling the error.'},
+ T:{tag:'T',q:'When is “T”?',d:'Finite streams, perpetuities, and terminal values for firms that never end.'},
+ r:{tag:'r',q:'What is the right r?',d:'The discount rate: time, inflation, opportunity cost and risk.'}};
+const L=[
+ {id:'fcff',n:1,t:'Free cash flows to the firm',q:['cf'],br:'Deployment',big:'Value is built on free cash flow to the firm: the cash left for all financiers after the firm reinvests in fixed assets and working capital.',
+  con:['FCF = operating cash flow − net capital spending − change in net working capital','Financing-side check: FCF = cash flow to creditors + cash flow to shareholders','Why add back depreciation in net capital spending: CapEx = End NFA − Beg NFA + Depreciation','Start with EBIT, not EBT: interest is a payment to financiers and belongs inside FCF','Taxes are computed on EBIT; the interest tax shield is handled later in the discount rate','Reconciling with the GAAP statement of cash flows: add back after-tax interest (Netflix example)'],
+  f:[`FCF = EBIT(1 − T) + Dep − NCS − ΔNWC`,`NCS = End NFA − Beg NFA + Dep`,`ΔNWC = (CA − CL)<sub>end</sub> − (CA − CL)<sub>beg</sub>`],
+  todo:['Interactive FCF build: change any input and watch both sides of the identity update (worked example: FCF = 331)','The finance cycle with the plowback loop, animated','Practice: compute OCF, NCS, ΔNWC and FCF with new numbers; “EBIT or EBT?” checks']},
+ {id:'forecasting',n:2,t:'Percentage of sales forecasting',q:['fc'],br:'Deployment',big:'To forecast free cash flows you need forecast income statements and balance sheets, and the sales forecast drives everything.',
+  con:['Eight steps: identify accounts that vary with sales, compute historical percentages, forecast sales, apply percentages, estimate the rest judgmentally, compute EFN or surplus, choose and use the plug','Sanity checks: reasonable sales, expense trends, sufficient assets, a believable funding plan','Top-down, bottom-up and driver-based sales forecasts (XOM and oil prices)','Internal and sustainable growth rates'],
+  f:[`Internal growth = ${fr('ROA × b','1 − ROA × b')}`,`Sustainable growth = ${fr('ROE × b','1 − ROE × b')}`,`b = 1 − dividends / net income`],
+  todo:['Pro forma builder: set sales growth and see the statements, EFN and plug update','Growth-rate explorer comparing internal and sustainable growth','Practice: complete a percentage-of-sales forecast step by step']},
+ {id:'tvm',n:3,t:'Time value of money',q:['r','T'],br:'Foundation',big:'Time has value. Converting every future cash flow into present dollars lets us compare cash flows that arrive at different times.',
+  con:['Future value build-up: $5,000 at 10% for 10 years grows to $12,968.71','Present value as indifference: the most you should pay is the PV at your opportunity rate','Five TVM variables: know four, solve for the fifth','Sign conventions for loans, investments and annuity streams','Calculator vs. Excel language: annual vs. periodic rates, total periods, P/Y, payment timing','APR vs. EAR; TVM problems assume stated rates','Perpetuities, constant and growing'],
+  f:[`FV = PV(1 + r)<sup>t</sup>`,`PV = ${fr('CF<sub>t</sub>','(1 + r)<sup>t</sup>')}`,`EAR = (1 + APR/m)<sup>m</sup> − 1`,`PV<sub>0</sub> = ${fr('CF<sub>1</sub>','r − g')}`],
+  todo:['Drag-able cash-flow timeline showing each PV shrinking with time','Sign-convention trainer: loan, investment or annuity?','Practice from the slides with fresh numbers: mortgage payment, 401(k), Flathead Lake solar panels, growing dividend']},
+ {id:'bonds',n:4,t:'Bonds',q:['r'],app:true,br:'Asset purchases and sales',big:'A bond is the quintessential valuation problem: map the coupons and principal, then discount at the yield to maturity. Bonds are not automatically safe, and not all bonds are the same.',
+  con:['Face value, coupon rate, maturity, and why the YTM is not on the certificate','Required return = risk-free rate + risk premium (inflation, default, interest-rate risk and others)','Credit ratings measure default risk only','Price vs. par: premium, discount and par bonds (the teeter-totter)','Duration: the weighted average time to receive PV, a measure of interest-rate risk','History: 1970s stagflation and the 2008 crisis'],
+  f:[`Price = ${fr('C','(1 + r)<sup>1</sup>')} + … + ${fr('C + Face','(1 + r)<sup>M</sup>')}`,`Price &gt; par ⇔ coupon &gt; YTM`,`Duration = Σ t × ${fr('PV(CF<sub>t</sub>)','Price')}`],
+  todo:['Teeter-totter: push YTM and watch price move; slide the fulcrum to see duration','Price–yield curves for short high-coupon vs. long low-coupon bonds','Practice: price a bond, classify premium or discount, build a duration table']},
+ {id:'stocks',n:5,t:'Stock valuation',q:['cf','T','r'],app:true,br:'Asset purchases and sales',big:'Buy low, sell high means finding mispricing. Several models estimate intrinsic value; triangulate with a football field.',
+  con:['Method of comparables: six steps, best for private firms with public comps','Dividend models: zero growth, constant growth, two-stage','Dividends vs. free cash flows; DCF subtracts debt to value equity','Estimating steady-state growth from GDP, by endpoints or log regression','Valuation football field'],
+  f:[`P<sub>0</sub> = ${fr('D<sub>1</sub>','r − g')}`,`Equity = Σ ${fr('FCF<sub>t</sub>','(1 + r)<sup>t</sup>')} + ${fr('FCF<sub>T+1</sub>/(r − g)','(1 + r)<sup>T</sup>')} − D<sub>0</sub>`,`g = e<sup>m</sup> − 1 from ln(GDP<sub>t</sub>) = ln(GDP<sub>0</sub>) + t·ln(1 + g)`],
+  todo:['Build-your-own football field from five models','DCF sensitivity: value as g approaches r','Practice: comparables, Gordon growth, two-stage DDM, DCF']},
+ {id:'capital-budgeting',n:6,t:'Capital budgeting',q:['cf','fc','T','r'],app:true,full:true},
+ {id:'relevant-cash-flows',n:7,t:'Relevant cash flows',q:['cf'],br:'Go/no-go decisions',big:'Include a cash flow only if it happens because the project is accepted.',
+  con:['Free cash flow to the firm is the basis','Incremental cash flow rule','IN: changes in NWC (recovered at the end), side effects, opportunity costs, taxes, salvage value','OUT: sunk costs and financing costs','Financing: include the full outlay at time 0, or discount principal and interest at the loan rate','GAAP vs. MACRS depreciation; depreciation matters only through taxes','After-tax salvage value'],
+  f:[`After-tax salvage = S − (S − BV) × T`,`BV = cost − accumulated depreciation`],
+  todo:['“In or out?” sorting game with explanations','Solar case: discounting loan payments at the project rate vs. the loan rate','Practice: after-tax salvage and full incremental FCF builds']},
+ {id:'risk-analysis',n:8,t:'Scenario, sensitivity and simulation',q:['fc'],br:'Go/no-go decisions',big:'All models are wrong, but some are useful. Never make a decision based on a single output derived from static inputs.',
+  con:['Scenario analysis: base, worst, best','Sensitivity analysis: perturb key inputs one at a time and together','Simulation: replace inputs with distributions, run thousands of trials, read the histogram','Probability primer: four moments, the normal distribution, the 68-95-99.7 rule','Enhancements: correlated inputs, fitted distributions'],
+  f:[`x̄ = ${fr('1','N')} Σ X<sub>i</sub>`,`s = √[ ${fr('1','N − 1')} Σ (X<sub>i</sub> − x̄)<sup>2</sup> ]`],
+  todo:['Practice: read histograms and tornado charts, 68-95-99.7 questions, scenario NPVs for the Solar case']},
+ {id:'wacc',n:9,t:'Weighted average cost of capital',q:['r'],br:'Procurement',big:'Get the numerator right, then get the denominator right. The discount rate depends on who owns the cash flows.',
+  con:['The discount rate compensates for inflation, opportunity cost and risk','Only systematic risk is rewarded','CAPM: risk-free rate + beta × equity risk premium','Estimating beta by regression; unlevering and relevering comparable betas','Cost of preferred stock and debt','Interest is tax-deductible, so debt costs R<sub>D</sub>(1 − T)'],
+  f:[`E(R<sub>i</sub>) = R<sub>F</sub> + β<sub>i</sub>[E(R<sub>m</sub>) − R<sub>F</sub>]`,`β<sub>A</sub> = β<sub>E</sub>(E/V), β<sub>E</sub> = β<sub>A</sub>(V/E)`,`WACC = ${fr('E','V')}R<sub>E</sub> + ${fr('D','V')}R<sub>D</sub>(1 − T) + ${fr('P','V')}R<sub>P</sub>`],
+  todo:['Beta scatterplot: dial up market sensitivity and watch the regression line','Diversification chart: total risk falling toward the systematic floor','Practice: CAPM, unlevering and relevering comparable betas, cost of preferred and debt, full WACC builds']}
+];
+
+/* ================= LEARN IT modules ================= */
+const MK=id=>`<defs><marker id="${id}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="context-stroke"/></marker></defs>`;
+const M=o=>({html:`<div class="learn"><div class="kicker"><b>Learn it</b> · ${o.k}</div><h2>${o.h}</h2><p>${o.p}</p><div class="lab"><figure class="pic">${o.fig||`<div class="fig${o.tall?' tall':o.short?' short':''}"><svg id="${o.id}" role="img" aria-label="${o.alt}"></svg></div>`}${o.cap?`<figcaption>${o.cap}</figcaption>`:''}</figure><div class="card panel">${o.side}</div></div></div>`,init:o.init});
+const stepper=id=>`<div class="row"><button class="sm" id="${id}P">Back</button><button class="sm pri" id="${id}N">Next</button><span id="${id}S" style="font-size:13px;color:var(--mute)"></span></div><p id="${id}T" style="margin-top:12px;min-height:6em"></p>`;
+function wireStep(id,n,draw){let i=0;const go=()=>{$('#'+id+'S').textContent=`Step ${i+1} of ${n}`;$('#'+id+'P').disabled=i===0;$('#'+id+'N').textContent=i===n-1?'Start over':'Next';draw(i)};$('#'+id+'N').onclick=()=>{i=(i+1)%n;go()};$('#'+id+'P').onclick=()=>{if(i>0){i--;go()}};go()}
+const seg=(id,labels,on=0)=>`<div class="seg" role="group" id="${id}">${labels.map((l,i)=>`<button class="${i===on?'on':''}" data-i="${i}">${l}</button>`).join('')}</div>`;
+function wireSeg(id,fn){$$('#'+id+' button').forEach(b=>b.onclick=()=>{$$('#'+id+' button').forEach(x=>x.classList.toggle('on',x===b));fn(+b.dataset.i)})}
+const sl=(id,label,min,max,step,val)=>`<label for="${id}">${label} <strong id="${id}O" style="color:var(--ink)"></strong></label><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${val}">`;
+const kv=rows=>`<table style="margin-top:12px">${rows.map(([a,b,c])=>`<tr><td>${a}</td><td${c?` style="color:${c};font-weight:600"`:''}>${b}</td></tr>`).join('')}</table>`;
+function rng(seed){let s=seed;return()=>{s=(s*1664525+1013904223)%4294967296;return s/4294967296}}
+function nrm(u){return()=>{const a=u()||1e-9,b=u();return Math.sqrt(-2*Math.log(a))*Math.cos(2*Math.PI*b)}}
+const n0=(x,d=0)=>x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+const LEARN={};
+
+/* ---------- Lecture 1: FCFF ---------- */
+const FW=[['EBIT','EBIT',1014,'s','Start with EBIT: operating profit before anyone who financed the firm gets paid.'],
+ ['− Taxes','Tax',-368,'d','Subtract taxes, computed on EBIT. The government is not one of the firm’s financiers, so its share comes out first.'],
+ ['+ Depreciation','Dep',500,'d','Add back depreciation. It was subtracted to get EBIT, but no cash actually left the firm.'],
+ ['= Operating CF','OCF',null,'t','That is operating cash flow: 1,146.'],
+ ['− Net capital spending','NCS',-433,'d','Subtract the cash reinvested in fixed assets: net capital spending of 433.'],
+ ['− ΔNWC','ΔNWC',-382,'d','Subtract the 382 increase in net working capital: cash now tied up in inventory and receivables, net of payables.'],
+ ['= FCF','FCF',null,'t','What is left, 331, is free cash flow to the firm: cash available to everyone who financed it.'],
+ ['Creditors','Cred.',136,'c','Now check from the other side. Creditors received 136: 93 of interest plus 43 of debt paid down.'],
+ ['Shareholders','Sh.',195,'h','Shareholders received 195: 285 of dividends minus 90 of net new stock issued. 136 + 195 = 331. Same cash, two views.']];
+LEARN.fcff=[
+ M({k:'The identity',h:'Two roads to the same 331',id:'fcW',alt:'Waterfall from EBIT to free cash flow, matched by cash flow to creditors and shareholders',
+  p:'Free cash flow can be measured from the asset side (what the operations throw off after reinvestment) or from the financing side (what was actually paid to creditors and shareholders). If you have done it right, the two must match. Step through the lecture example.',
+  cap:'Lecture example: EBIT 1,014; depreciation 500; taxes 368; NFA 2,261 → 2,194; NWC 1,456 → 1,838.',
+  side:stepper('fcW'),
+  init(){let st=0;const svg=$('#fcW');
+   const draw=()=>live(svg,(W,H)=>{const m={l:W<560?8:16,r:8,t:28,b:40},cols=8,cw=(W-m.l-m.r)/cols,nar=cw<118,bw=cw*.62,Y=v=>H-m.b-(v/1600)*(H-m.t-m.b);let g='',run=0,fcf=0;
+    FW.forEach((f,i)=>{let a,b,col,x=m.l+cw*Math.min(i,7)+cw/2;
+     if(f[3]==='s'){a=0;b=f[2];run=b;col='var(--ink)'}else if(f[3]==='d'){a=run;b=run+f[2];run=b;col=f[2]>0?'var(--good)':'var(--red)'}else if(f[3]==='t'){a=0;b=run;col='var(--ink)';if(i===6)fcf=run}else if(f[3]==='c'){a=0;b=136;col='var(--slate)'}else{a=136;b=331;col='color-mix(in srgb,var(--slate) 55%,var(--bg))'}
+     const y1=Y(Math.max(a,b)),y0=Y(Math.min(a,b)),on=i<=st;
+     g+=on?`<rect x="${x-bw/2}" y="${y1}" width="${bw}" height="${y0-y1}" fill="${col}"/>`:`<rect x="${x-bw/2}" y="${y1}" width="${bw}" height="${y0-y1}" fill="none" stroke="var(--rule)" stroke-dasharray="4 3"/>`;
+     if(on){const v=f[2]==null?run:f[2];const lab=f[3]==='h'?'195':f[3]==='c'?'136':(f[3]==='d'&&v>0?'+':'')+n0(v);g+=T(x,f[3]==='c'?(y1+y0)/2+4:y1-6,lab,`text-anchor="middle" style="fill:${f[3]==='c'?'#fff':'var(--ink)'};font-weight:600"`)}
+     if(i<7)g+=T(x,H-m.b+16,nar?f[1]:f[0].replace(/^[=−+] /,''),'text-anchor="middle" style="fill:var(--ink);font-size:'+(nar?11:12)+'px"');
+     if(i>0&&i<7&&f[3]==='d'){const px=m.l+cw*(i-1)+cw/2+bw/2;g+=`<line x1="${px}" x2="${x-bw/2}" y1="${Y(a)}" y2="${Y(a)}" stroke="var(--mute)" stroke-dasharray="2 3"/>`}});
+    g+=T(m.l+cw*7+cw/2,H-m.b+16,nar?'Fin.':'Financing','text-anchor="middle" style="fill:var(--ink);font-size:'+(nar?11:12)+'px"');
+    if(st>=7)g+=`<line x1="${m.l+cw*6+cw/2+bw/2}" x2="${m.l+cw*7+cw/2-bw/2}" y1="${Y(331)}" y2="${Y(331)}" stroke="var(--red)" stroke-width="2" stroke-dasharray="5 4"/>`;
+    if(st>=8)g+=T(m.l+cw*7+cw/2,Y(331)-22,'= 331','text-anchor="middle" style="fill:var(--red);font-weight:700"');
+    return g});
+   wireStep('fcW',FW.length,i=>{st=i;$('#fcWT').innerHTML=FW[i][4];draw()})}}),
+ M({k:'Preemptive question 1',h:'Why add back depreciation to get capital spending?',id:'fcN',alt:'Net fixed assets rise with purchases and fall with depreciation',
+  p:'The balance sheets tell you net fixed assets at the start and end of the year. The income statement tells you depreciation. What you actually want is the cash spent on new assets, and no statement reports it directly. Picture net fixed assets as a tank: purchases pour in, depreciation drains out.',
+  cap:'Lecture example: $10M of net fixed assets, $1M of new purchases, $0.5M of depreciation. Axis starts at $9M.',
+  side:`${seg('fcNs',['What the statements show','Solve for CapEx'])}<p id="fcNt" style="margin-top:14px"></p>`,
+  init(){let mode=0;const draw=()=>{live($('#fcN'),(W,H)=>{const m={l:12,r:12,t:34,b:40},cw=(W-m.l-m.r)/4,bw=Math.min(90,cw*.6),lo=9,hi=11.4,Y=v=>H-m.b-((v-lo)/(hi-lo))*(H-m.t-m.b);
+    const C=[['Beginning NFA',lo,10,'var(--ink)','$10.0M'],['+ CapEx',10,11,'var(--good)',mode?'$1.0M':'?'],['− Depreciation',10.5,11,'var(--red)','−$0.5M'],['Ending NFA',lo,10.5,'var(--ink)','$10.5M']];
+    let g='';C.forEach((c,i)=>{const x=m.l+cw*i+cw/2,y1=Y(c[2]),y0=Y(c[1]),hide=i===1&&!mode;
+     g+=hide?`<rect x="${x-bw/2}" y="${y1}" width="${bw}" height="${y0-y1}" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="6 4"/>`:`<rect x="${x-bw/2}" y="${y1}" width="${bw}" height="${y0-y1}" fill="${c[3]}"/>`;
+     g+=T(x,hide?(y1+y0)/2+8:y1-8,c[4],`text-anchor="middle" style="fill:${hide?'var(--good)':'var(--ink)'};font-weight:700;font-size:${hide?22:13}px"`)+T(x,H-m.b+18,W<520?c[0].replace('Beginning','Beg.').replace('Ending','End').replace('Depreciation','Dep.'):c[0],'text-anchor="middle" style="fill:var(--ink)"');
+     if(i<3){const nx=m.l+cw*(i+1)+cw/2-bw/2,yy=Y(i===0?10:i===1?11:10.5);g+=`<line x1="${x+bw/2}" x2="${nx}" y1="${yy}" y2="${yy}" stroke="var(--mute)" stroke-dasharray="2 3"/>`}});
+    g+=`<path d="M${m.l} ${H-m.b} l6 -5 l6 5 l6 -5" fill="none" stroke="var(--mute)"/>`;return g});
+   $('#fcNt').innerHTML=mode?'<strong>CapEx = End NFA − Beg NFA + Depreciation</strong><br>= 10.5 − 10.0 + 0.5 = <strong>$1.0M</strong>.<br><br>Forget the add-back and you would conclude the firm spent only $0.5M, understating the cash it reinvested by half.':'You can see three numbers: beginning NFA, ending NFA, and depreciation. The flow you need, cash spent on new assets, is the one bar no statement reports.'};
+   wireSeg('fcNs',i=>{mode=i;draw()});draw()}}),
+ M({k:'Preemptive questions 2 and 3',h:'Why start with EBIT, not EBT?',id:'fcE',alt:'EBIT split among government, creditors and shareholders',
+  p:'Free cash flow to the firm is the cash available to <em>all</em> financiers, creditors included. Interest is one of the payments to financiers, so it has to stay inside the number. Start from EBT and you quietly delete the creditors from the picture.',
+  side:`${seg('fcEs',['Start from EBIT','Start from EBT'])}<p id="fcEt" style="margin-top:14px"></p>`,
+  init(){let mode=0;const draw=()=>{live($('#fcE'),(W,H)=>{const m={l:14,r:14},bw=W-m.l-m.r,tot=1014,X=v=>m.l+v/tot*bw,yb=H*.42,bh=58;
+    const S=[['Government','taxes',0,368,'var(--mute)'],['Creditors','interest',368,461,'var(--slate)'],['Shareholders','what is left',461,1014,'color-mix(in srgb,var(--slate) 50%,var(--bg))']];
+    let g=`<defs><pattern id="hatchE" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="var(--panel)"/><line x1="0" y1="0" x2="0" y2="8" stroke="var(--red)" stroke-width="3"/></pattern></defs>`;
+    S.forEach((s,i)=>{const gone=mode&&i===1;g+=`<rect x="${X(s[2])}" y="${yb}" width="${X(s[3])-X(s[2])}" height="${bh}" fill="${gone?'url(#hatchE)':s[4]}" stroke="var(--bg)" stroke-width="2"/>`;
+     const lx=X(s[2])+4,ly=yb+bh+22+(i===1?46:0);g+=`<line x1="${X(s[2])+2}" x2="${X(s[2])+2}" y1="${yb+bh}" y2="${ly-14}" stroke="var(--mute)"/>`+T(lx,ly,`${s[0]}: ${n0(s[3]-s[2])}`,`style="fill:${gone?'var(--red)':'var(--ink)'};font-weight:600;${gone?'text-decoration:line-through':''}"`)+T(lx,ly+16,gone?'missing from FCF!':s[1],`style="fill:${gone?'var(--red)':'var(--mute)'}"`)});
+    const a=X(mode?461:368),b=X(1014);g+=`<path d="M${a} ${yb-10} v-12 H${b} v12" fill="none" stroke="var(--red)" stroke-width="2"/>`+T((a+b)/2,yb-30,mode?'FCF now counts only shareholders':'Cash for financiers → FCF','text-anchor="middle" style="fill:var(--red);font-weight:700"');
+    g+=T(m.l,24,'EBIT = 1,014','style="fill:var(--ink);font-weight:600"');return g});
+   $('#fcEt').innerHTML=mode?'EBT has already subtracted the 93 of interest. Build FCF from there and the creditors’ share disappears, so the firm looks less valuable than it is. Interest is not a cost of running the business; it is a <em>distribution</em> to financiers.':'From EBIT, taxes go to the government and everything else is available to the people who financed the firm. Notice taxes are computed on EBIT too (question 3). The tax savings from interest are real, but we capture them later, in the discount rate (Lecture 9).'};
+   wireSeg('fcEs',i=>{mode=i;draw()});draw()}})];
+
+/* ---------- Lecture 2: Forecasting ---------- */
+LEARN.forecasting=[
+ M({k:'Steps 5 to 8',h:'Growth needs funding: where the plug comes from',id:'efn',tall:1,alt:'Assets needed versus financing available as sales grow, with external funds needed filling the gap',
+  p:'When sales grow, the assets that vary with sales (receivables, inventory, plant) grow with them. Some financing grows automatically: payables and accruals, plus whatever profit you retain. Whatever is still missing must come from outside. That gap is external funds needed, and it is the plug that makes the balance sheet balance.',
+  cap:'Illustrative firm: last year’s sales $1,000. Assets are 90% of sales; spontaneous liabilities 15%; long-term debt $200 and equity $550 stay fixed; net margin 8%, payout 40%.',
+  side:`${sl('efnG','Sales growth next year',0,30,0.5,15)}<div id="efnK"></div><p id="efnM" style="font-size:15px;margin-top:12px"></p>`,
+  init(){const up=()=>{const g=+$('#efnG').value/100;$('#efnGO').textContent=(g*100).toFixed(1)+'%';const S=1000*(1+g),A=.9*S,CL=.15*S,RE=.08*.6*S,fin=CL+200+550+RE,E=A-fin,g0=750/.702/1000-1;
+    live($('#efn'),(W,H)=>{const m={t:24,b:40},mx=1300,Y=v=>H-m.b-v/mx*(H-m.t-m.b),cw=Math.min(150,W*.26),x1=W*.3-cw/2,x2=W*.7-cw/2;let g='';
+     const stack=(x,parts,side)=>{let acc=0;parts.forEach(([v,c,l,tc])=>{if(v<=0)return;const y1=Y(acc+v),y0=Y(acc);g+=`<rect x="${x}" y="${y1}" width="${cw}" height="${y0-y1}" fill="${c}" stroke="var(--bg)" stroke-width="2"/>`;if(y0-y1>18)g+=T(x+cw/2,(y0+y1)/2+4,l+' '+n0(v),`text-anchor="middle" style="fill:${tc||'#fff'};font-weight:600"`);else g+=T(side>0?x+cw+6:x-6,(y0+y1)/2+4,l+' '+n0(v),`text-anchor="${side>0?'start':'end'}" style="fill:${c.includes('red')?'var(--red)':c.includes('good')?'var(--good)':'var(--ink)'};font-weight:700"`);acc+=v})};
+     stack(x1,[[.4*S,'var(--slate)','Current'],[.5*S,'color-mix(in srgb,var(--slate) 60%,var(--bg))','Fixed',' var(--ink)'],[E<0?-E:0,'var(--good)','Surplus']],-1);
+     stack(x2,[[CL,'var(--mute)','Payables'],[200,'color-mix(in srgb,var(--mute) 60%,var(--bg))','Debt','var(--ink)'],[550,'color-mix(in srgb,var(--mute) 35%,var(--bg))','Equity','var(--ink)'],[RE,'var(--ink)','+RE'],[E>0?E:0,'var(--red)','EFN']],1);
+     g+=`<line x1="${x1-14}" x2="${x2+cw+14}" y1="${Y(900)}" y2="${Y(900)}" stroke="var(--mute)" stroke-dasharray="4 4"/>`+T(x1-16,Y(900)+4,'last year','text-anchor="end"');
+     g+=T(x1+cw/2,H-m.b+18,'Assets needed','text-anchor="middle" style="fill:var(--ink);font-weight:600"')+T(x2+cw/2,H-m.b+18,'How they’re financed','text-anchor="middle" style="fill:var(--ink);font-weight:600"');return g});
+    $('#efnK').innerHTML=kv([['Sales',fmt(S)],['Assets needed',fmt(A)],['Financing that shows up on its own',fmt(fin)],[E>=0?'External funds needed':'Surplus',fmt(Math.abs(E)),E>=0?'var(--bad)':'var(--good)']]);
+    $('#efnM').innerHTML=`At about <strong>${(g0*100).toFixed(1)}% growth</strong> the gap closes: the fastest this firm can grow on retained earnings and spontaneous liabilities alone. Grow faster and someone has to write a check. Then ask the sanity check from the slides: is that funding plan realistic?`};
+   $('#efnG').addEventListener('input',up);up()}}),
+ M({k:'Forecasting sales',h:'Two ways to build the sales forecast',fig:`<div class="tdbu"><div><div class="tdh">Top down</div><div class="fun"><div style="width:100%">Economy<small>GDP grows 2.1%</small></div><div style="width:78%">Industry<small>$40B, growing 3%</small></div><div style="width:56%">Our share<small>5% of $41.2B</small></div><div style="width:34%;background:var(--red)">$2.06B</div></div></div><div><div class="tdh">Bottom up</div><div class="bu" id="buGrid"></div></div></div>`,
+  p:'Every line of the forecast scales off sales, so the sales number deserves the most care. Top down starts with the economy and narrows to your share of it. Bottom up asks the people closest to customers and adds up the pieces. Good forecasters do both and investigate when they disagree.',
+  cap:'Illustrative numbers. A third approach, from the slides: find the empirical drivers of revenue (for Exxon, the price of oil), estimate the relationship by regression, forecast the drivers, then forecast revenue.',
+  side:`<p style="font-size:15px"><strong>Top down</strong> is consistent with the big picture but can miss what is happening with your own products.</p><p style="font-size:15px"><strong>Bottom up</strong> captures local knowledge but tends to be optimistic: every sales manager believes in their region.</p><p style="font-size:15px">Then run the sanity checks: is the sales forecast reasonable? Do expense trends make sense? Are assets sufficient? <strong>If sales are off, nothing else is right.</strong></p>`,
+  init(){const P=['Product A','Product B','Product C'],R=['West','Central','East'],V=[[310,240,190],[280,220,170],[260,210,170]];let t=0;V.flat().forEach(v=>t+=v);
+   $('#buGrid').innerHTML=`<div></div>${R.map(r=>`<b>${r}</b>`).join('')}`+P.map((p,i)=>`<b>${p}</b>${V[i].map(v=>`<span>$${v}M</span>`).join('')}`).join('')+`<div class="tot">Sum = $${n0(t/1000,2)}B</div>`}})];
+
+/* ---------- Lecture 3: TVM ---------- */
+LEARN.tvm=[
+ M({k:'Future value',h:'Compounding: interest that earns interest',id:'cmp',alt:'Stacked bars of principal, simple interest and interest on interest growing over time',
+  p:'Put $5,000 away at 10%. Each year you earn interest on the original deposit, and also interest on all the interest already earned. That second piece starts tiny and ends up dominating. This is why time is so powerful, and why discounting distant cash flows matters so much.',
+  side:`${sl('cmpR','Rate of return',1,15,0.5,10)}${sl('cmpN','Years',5,40,1,10)}<div id="cmpK"></div>`,
+  init(){const up=()=>{const r=+$('#cmpR').value/100,N=+$('#cmpN').value,P=5000,FV=P*Math.pow(1+r,N);$('#cmpRO').textContent=(r*100).toFixed(1)+'%';$('#cmpNO').textContent=N;
+    live($('#cmp'),(W,H)=>{const m={l:52,r:10,t:26,b:30},bw=(W-m.l-m.r)/N,Y=v=>H-m.b-v/FV*(H-m.t-m.b);let g='';
+     for(let t=1;t<=N;t++){const f=P*Math.pow(1+r,t),si=P*r*t,x=m.l+bw*(t-1)+bw*.1,w=bw*.8;[[0,P,'var(--ink)'],[P,P+si,'var(--slate)'],[P+si,f,'var(--red)']].forEach(([a,b,c])=>g+=`<rect x="${x}" y="${Y(b)}" width="${w}" height="${Math.max(0,Y(a)-Y(b))}" fill="${c}"/>`);
+      if(N<=20||t%5===0)g+=T(x+w/2,H-m.b+16,t,'text-anchor="middle"')}
+     g+=T(m.l-6,Y(FV)+4,short(FV),'text-anchor="end" style="fill:var(--ink);font-weight:600"')+T(m.l-6,Y(P)+4,short(P),'text-anchor="end"')+T(W-m.r,H-4,'year','text-anchor="end"');return g});
+    const si=P*r*N;$('#cmpK').innerHTML=kv([['<span style="color:var(--ink)">■</span> Original deposit',fmt(P)],['<span style="color:var(--slate)">■</span> Simple interest',fmt(si)],['<span style="color:var(--red)">■</span> Interest on interest',fmt(FV-P-si)],['Future value',fmt(FV,2)]])+`<p style="font-size:14px;margin-top:10px">FV = PV(1 + r)<sup>t</sup> = 5,000 × ${(1+r).toFixed(3)}<sup>${N}</sup></p>`};
+   ['#cmpR','#cmpN'].forEach(s=>$(s).addEventListener('input',up));up()}}),
+ M({k:'Present value',h:'The further away, the less it is worth today',id:'pvd',short:1,alt:'Coins promised in later years drawn smaller according to their present value',
+  p:'Run compounding backwards. Each coin is a promise of $1,000 in a future year, drawn at the size it is worth today. Raise the discount rate and the distant coins shrink fastest, because they are discounted the most times.',
+  cap:'Coin area is proportional to present value. The dashed line marks the year a promise is worth half its face value today.',
+  side:`${sl('pvdR','Discount rate',0,20,0.5,8)}<p id="pvdT" style="margin-top:12px;font-size:15px"></p>`,
+  init(){const up=()=>{const r=+$('#pvdR').value/100;$('#pvdRO').textContent=(r*100).toFixed(1)+'%';const half=r>0?Math.log(2)/Math.log(1+r):null;
+    live($('#pvd'),(W,H)=>{const ts=[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30],m={l:16,r:16},st=(W-m.l-m.r)/ts.length,R=Math.min(st*.48,H*.22),cy=H*.45,X=t=>m.l+st*(t/2)+st/2;let g='';
+     if(half&&half<=30)g+=`<line x1="${X(half)}" x2="${X(half)}" y1="${cy-R-26}" y2="${H-20}" stroke="var(--red)" stroke-dasharray="5 4"/>`+T(X(half)+4,cy-R-14,'worth half: year '+half.toFixed(1),'style="fill:var(--red);font-weight:600"');
+     ts.forEach(t=>{const pv=1000/Math.pow(1+r,t),rr=R*Math.sqrt(pv/1000);g+=`<circle cx="${X(t)}" cy="${cy}" r="${R}" fill="none" stroke="var(--rule)" stroke-dasharray="2 3"/><circle cx="${X(t)}" cy="${cy}" r="${rr}" fill="#e8b830" stroke="#a87b00"/>`;
+      if(t%10===0){g+=T(X(t),cy+R+20,'Year '+t,'text-anchor="middle" style="fill:var(--ink)"')+T(X(t),cy+R+36,fmt(pv),'text-anchor="middle" style="fill:var(--ink);font-weight:600"')}});return g});
+    $('#pvdT').innerHTML=r>0?`At ${(r*100).toFixed(1)}%, $1,000 in 10 years is worth <strong>${fmt(1000/Math.pow(1+r,10))}</strong> today, and in 30 years only <strong>${fmt(1000/Math.pow(1+r,30))}</strong>.<br><br>Shortcut, the rule of 72: money halves in value roughly every 72 ÷ ${(r*100).toFixed(1)} ≈ ${(72/(r*100)).toFixed(1)} years.`:'At 0%, time has no value: every coin is worth the full $1,000. That is never true in practice.'};
+   $('#pvdR').addEventListener('input',up);up()}}),
+ M({k:'Keys to success',h:'Getting the signs right',id:'sgn',short:1,alt:'Arrows showing which way present value, payments and future value flow between you and the bank',
+  p:'A financial calculator or Excel wants to know which way each cash flow moves. Picture yourself on one side and the bank on the other. Money coming to you is positive; money leaving you is negative. Decide which of the three problem types you have, and the signs follow.',
+  side:`${seg('sgnS',['Loan','Investment','Annuity stream'])}<p id="sgnT" style="margin-top:14px;font-size:15px"></p>`,
+  init(){const D=[[['PV','+','Loan proceeds'],['PMT','−','Regular payments'],['FV','−','Anything left to pay']],[['PV','−','Initial deposit'],['PMT','−','Regular contributions'],['FV','+','The nest egg']],[['PV','−','Lump sum you hand over'],['PMT','+','Payments you receive'],['FV','+','Anything left at the end']]];
+   const TX=['You receive the loan today (PV +), then pay it back (PMT −, FV −). Example from the slides: a $225,000 mortgage at 4.75% APR for 30 years: PV = +225,000, solve for PMT (negative).','You put money in (PV −, PMT −) and take the nest egg out later (FV +). Example: $850 a month into a 401(k).','You hand over a lump sum (PV −) and receive a stream of payments back (PMT +, FV +). Example: buying an annuity at retirement.'];
+   let k=0;const draw=()=>{live($('#sgn'),(W,H)=>{const xm=Math.min(120,W*.2),xb=W-xm,rows=D[k];let g=MK('sgA')+MK('sgB');
+    g+=`<rect x="${xm-56}" y="20" width="112" height="${H-40}" fill="var(--panel)"/>`+T(xm,44,'Me','text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:16px"')+`<rect x="${xb-56}" y="20" width="112" height="${H-40}" fill="var(--panel)"/>`+T(xb,44,'Bank','text-anchor="middle" style="fill:var(--ink);font-weight:700;font-size:16px"');
+    rows.forEach(([n,s,l],i)=>{const y=86+i*(H-110)/3,into=s==='+',c=into?'var(--good)':'var(--red)';const [a,b]=into?[xb-60,xm+60]:[xm+60,xb-60];
+     g+=`<line x1="${a}" x2="${b}" y1="${y}" y2="${y}" stroke="${c}" stroke-width="3" marker-end="url(#${into?'sgA':'sgB'})"/>`+T(W/2,y-10,`${n} = ( ${s} )`,`text-anchor="middle" style="fill:${c};font-weight:700;font-size:15px"`)+T(W/2,y+22,l,'text-anchor="middle" style="fill:var(--ink)"')});return g});
+    $('#sgnT').innerHTML=TX[k]+'<br><br>If every value you enter has the same sign, the calculator cannot solve: money has to flow in both directions.'};
+   wireSeg('sgnS',i=>{k=i;draw()});draw()}})];
+
+/* ---------- Lecture 4: Bonds ---------- */
+const bondP=(c,n,y,f=1000)=>{let p=0;for(let t=1;t<=n;t++)p+=c*f/Math.pow(1+y,t);return p+f/Math.pow(1+y,n)};
+LEARN.bonds=[
+ M({k:'Bond pricing key points',h:'The teeter-totter: yield up, price down',id:'tt',short:1,alt:'A seesaw with yield to maturity on one end and price on the other',
+  p:'A bond’s coupon is fixed when it is issued. If investors later demand a higher return than the coupon pays, the only way to give it to them is a lower price. If they demand less, they bid the price up. Push the yield and watch the other end move.',
+  cap:'A 10-year bond with a 6% annual coupon and $1,000 face value.',
+  side:`${sl('ttY','Yield to maturity investors demand',1,12,0.1,8)}<div class="big" id="ttP" style="margin-top:10px"></div><p id="ttT" style="font-size:15px;margin-top:8px"></p>`,
+  init(){const up=()=>{const y=+$('#ttY').value/100,p=bondP(.06,10,y);$('#ttYO').textContent=(y*100).toFixed(1)+'%';$('#ttP').textContent=fmt(p,2);
+    const st=Math.abs(y-.06)<.0005?'par':y>.06?'discount':'premium';$('#ttT').innerHTML=st==='par'?'Coupon = YTM, so the bond sells at <strong>par</strong>.':st==='discount'?'YTM > coupon (6%), so the bond sells at a <strong>discount</strong>. Buyers earn the difference as the price climbs back to $1,000 at maturity.':'YTM < coupon (6%), so the bond sells at a <strong>premium</strong>. Its above-market coupons are worth paying extra for.';
+    live($('#tt'),(W,H)=>{const cx=W/2,gy=H-26,py=gy-70,L=Math.min(W*.86,560),deg=Math.max(-20,Math.min(20,(y*100-6)*3.4)),th=deg*Math.PI/180,dx=L/2*Math.cos(th),dy=L/2*Math.sin(th);let g='';
+     g+=`<line x1="20" x2="${W-20}" y1="${gy}" y2="${gy}" stroke="var(--rule)" stroke-width="2"/><polygon points="${cx-34},${gy} ${cx+34},${gy} ${cx},${py+6}" fill="var(--mute)"/>`;
+     g+=`<line x1="${cx-dx}" y1="${py-dy}" x2="${cx+dx}" y2="${py+dy}" stroke="#8a5a2b" stroke-width="12" stroke-linecap="round"/>`;
+     g+=`<circle cx="${cx-dx+16}" cy="${py-dy-30}" r="24" fill="var(--red)"/>`+T(cx-dx+16,py-dy-26,(y*100).toFixed(1)+'%','text-anchor="middle" style="fill:#fff;font-weight:700"')+T(cx-dx+16,py-dy-62,'YTM','text-anchor="middle" style="fill:var(--ink);font-weight:600"');
+     g+=`<rect x="${cx+dx-86}" y="${py+dy-48}" width="84" height="36" fill="var(--slate)"/>`+T(cx+dx-44,py+dy-25,'$'+n0(p),'text-anchor="middle" style="fill:#fff;font-weight:700"')+T(cx+dx-44,py+dy-58,'Price','text-anchor="middle" style="fill:var(--ink);font-weight:600"');
+     g+=T(cx,gy+18,'coupon fixed at 6%','text-anchor="middle"');return g})};
+   $('#ttY').addEventListener('input',up);up()}}),
+ M({k:'Duration',h:'Duration is the balance point',id:'dur',alt:'Present values of bond cash flows drawn as weights on a beam balanced at the duration',
+  p:'Draw each cash flow’s present value as a weight sitting at the time it arrives. Duration is the point where the beam balances: the weighted-average time to get your money back. The further out the balance point, the longer the lever, and the harder a change in yield swings the price.',
+  cap:'All three bonds priced at a 6% yield. Weights are drawn to scale within each bond.',
+  side:`${seg('durS',['5-yr, 8% coupon','20-yr, 2% coupon','10-yr zero'])}<div id="durK"></div><p style="font-size:14px;margin-top:10px">Longer maturity and lower coupons push the balance point out. Duration also shrinks as a bond ages.</p>`,
+  init(){const B=[[.08,5],[.02,20],[0,10]],y=.06;let k=0;const draw=()=>{const [c,n]=B[k],cf=[];for(let t=1;t<=n;t++)cf.push([t,c*1000+(t===n?1000:0)]);const pvs=cf.map(([t,v])=>[t,v/Math.pow(1+y,t)]),P=pvs.reduce((a,b)=>a+b[1],0),D=pvs.reduce((a,[t,v])=>a+t*v,0)/P;
+    live($('#dur'),(W,H)=>{const m={l:20,r:20},X=t=>m.l+t/20*(W-m.l-m.r),by=H-70,mx=Math.max(...pvs.map(p=>p[1])),hh=by-36;let g='';
+     g+=`<line x1="${X(0)}" x2="${X(20)}" y1="${by}" y2="${by}" stroke="#8a5a2b" stroke-width="8" stroke-linecap="round"/>`;
+     pvs.forEach(([t,v])=>{const h=Math.max(3,v/mx*hh),w=Math.max(6,(W-40)/20*.6);g+=`<rect x="${X(t)-w/2}" y="${by-4-h}" width="${w}" height="${h}" fill="var(--slate)"/>`});
+     g+=`<polygon points="${X(D)-22},${by+44} ${X(D)+22},${by+44} ${X(D)},${by+5}" fill="var(--red)"/>`+T(X(D),by+60,'balances at '+D.toFixed(2)+' yrs','text-anchor="middle" style="fill:var(--red);font-weight:700"');
+     for(let t=0;t<=20;t+=5)g+=T(X(t),by+22,t,'text-anchor="middle"');return g});
+    const p1=bondP(c,n,y+.01);$('#durK').innerHTML=kv([['Price at 6%',fmt(P,2)],['Duration',D.toFixed(2)+' years','var(--red)'],['If yields rise to 7%',fmt(p1,2)],['Price change',((p1/P-1)*100).toFixed(1)+'%','var(--bad)']])};
+   wireSeg('durS',i=>{k=i;draw()});draw()}}),
+ M({k:'What determines yield to maturity?',h:'Building a yield, one premium at a time',fig:`<div id="rqF" class="rq"></div>`,
+  p:'A bond’s yield is the return investors demand, and they demand compensation for each risk they bear. Start with a real return and expected inflation (together, the risk-free rate), then stack on premiums for interest-rate risk, default risk and liquidity. Pick a bond and see what its yield is made of.',
+  cap:'Illustrative premiums. Credit ratings speak only to the default slice; inflation and interest-rate risk hit even AAA bonds, which is why “bonds are safe” is a myth.',
+  side:`${seg('rqS',['Treasury bill','30-yr Treasury','A-rated corporate','Junk bond'])}<p id="rqT" style="font-size:15px;margin-top:14px"></p>`,
+  init(){const C=[['Real return','var(--ink)'],['Expected inflation','var(--slate)'],['Interest-rate risk','color-mix(in srgb,var(--slate) 50%,var(--bg))'],['Default risk','var(--red)'],['Liquidity','#d98a00']];
+   const S=[[1.5,2.5,0,0,0],[1.5,2.5,1.0,0,0],[1.5,2.5,.7,1.0,.3],[1.5,2.5,.7,4.5,1.0]],TX=['Short-term and backed by the government: essentially just the risk-free rate.','Same issuer, but 30 years of exposure to rate changes earns an interest-rate (maturity) premium.','A small default premium plus a little extra because corporate bonds trade less easily.','High default risk dominates. Note that the rating agencies measure only this one slice.'];
+   let k=0;const draw=()=>{const v=S[k],tot=v.reduce((a,b)=>a+b,0);$('#rqF').innerHTML=`<div class="rqbar">${v.map((x,i)=>x?`<i style="width:${x/11*100}%;background:${C[i][1]}" title="${C[i][0]}"></i>`:'').join('')}</div><div class="rqtot">Yield to maturity ≈ <strong>${tot.toFixed(1)}%</strong></div><ul class="rqleg">${v.map((x,i)=>`<li style="opacity:${x?1:.35}"><span style="background:${C[i][1]}"></span>${C[i][0]}<b>${x?x.toFixed(1)+'%':'—'}</b></li>`).join('')}</ul><div class="rqbrace"><span style="width:${4/11*100}%">risk-free rate</span><span style="flex:1">risk premium</span></div>`;$('#rqT').textContent=TX[k]};
+   wireSeg('rqS',i=>{k=i;draw()});draw()}})];
+
+/* ---------- Lecture 5: Stocks ---------- */
+LEARN.stocks=[
+ M({k:'Two-stage models',h:'Most of a stock’s value lives past the forecast',id:'dd2',alt:'Five years of dividends and a terminal value, each shrunk to present value and stacked into today’s price',
+  p:'A two-stage model forecasts dividends (or free cash flows) year by year for a few years, then collapses everything after that into one terminal value using the constant-growth formula. Watch how big that terminal value is, even after discounting. That is why the steady-state growth rate deserves so much care.',
+  cap:'Illustrative stock: last dividend $2.00, discount rate 10%. Outlines are nominal amounts, solid bars are present values.',
+  side:`${sl('ddG1','Growth, years 1–5',0,30,1,15)}${sl('ddG2','Steady-state growth after year 5',0,6,0.25,3)}<div id="ddK"></div>`,
+  init(){const up=()=>{const g1=+$('#ddG1').value/100,g2=+$('#ddG2').value/100,r=.10;$('#ddG1O').textContent=(g1*100).toFixed(0)+'%';$('#ddG2O').textContent=(g2*100).toFixed(2)+'%';
+    const D=[1,2,3,4,5].map(t=>2*Math.pow(1+g1,t)),pv=D.map((d,i)=>d/Math.pow(1.1,i+1)),TV=D[4]*(1+g2)/(r-g2),pvTV=TV/Math.pow(1.1,5),pd=pv.reduce((a,b)=>a+b,0),P=pd+pvTV;
+    live($('#dd2'),(W,H)=>{const m={t:28,b:36},mx=Math.max(TV,P)*1.05,Y=v=>H-m.b-v/mx*(H-m.t-m.b),L=W*.3,bw=Math.min(64,L*.42),cx=L*.5;let g='';
+     g+=`<line x1="8" x2="${W-8}" y1="${H-m.b}" y2="${H-m.b}" stroke="var(--rule)" stroke-width="1.5"/><line x1="${L}" x2="${L}" y1="${m.t-10}" y2="${H-m.b}" stroke="var(--rule)" stroke-dasharray="3 4"/>`;
+     g+=`<rect x="${cx-bw/2}" y="${Y(pd)}" width="${bw}" height="${H-m.b-Y(pd)}" fill="var(--slate)"/><rect x="${cx-bw/2}" y="${Y(P)}" width="${bw}" height="${Y(pd)-Y(P)}" fill="var(--red)"/>`;
+     g+=T(cx,Y(P)-8,'$'+P.toFixed(2),'text-anchor="middle" style="fill:var(--ink);font-weight:700"')+T(cx,H-m.b+18,'Price today','text-anchor="middle" style="fill:var(--ink);font-weight:600"');
+     if(Y(pd)-Y(P)>18)g+=T(cx,(Y(P)+Y(pd))/2+4,Math.round(pvTV/P*100)+'%','text-anchor="middle" style="fill:#fff;font-weight:700"');
+     const R0=L+14,st=(W-R0-10)/6,w=Math.min(34,st*.55);
+     D.forEach((d,i)=>{const x=R0+st*i+st/2;g+=`<rect x="${x-w/2}" y="${Y(d)}" width="${w}" height="${H-m.b-Y(d)}" fill="none" stroke="var(--mute)" stroke-dasharray="3 3"/><rect x="${x-w/2}" y="${Y(pv[i])}" width="${w}" height="${H-m.b-Y(pv[i])}" fill="var(--slate)"/>`+T(x,H-m.b+18,'Y'+(i+1),'text-anchor="middle" style="fill:var(--ink)"')});
+     const xt=R0+st*5+st/2;g+=`<rect x="${xt-w/2}" y="${Y(TV)}" width="${w}" height="${H-m.b-Y(TV)}" fill="none" stroke="var(--red)" stroke-dasharray="4 3"/><rect x="${xt-w/2}" y="${Y(pvTV)}" width="${w}" height="${H-m.b-Y(pvTV)}" fill="var(--red)"/>`;
+     g+=T(xt,Y(TV)-8,'TV $'+TV.toFixed(0),'text-anchor="end" style="fill:var(--red);font-weight:700"').replace('text-anchor="end"','text-anchor="'+(W<520?'end':'middle')+'"')+T(xt,H-m.b+18,'Y5 TV','text-anchor="middle" style="fill:var(--red)"');
+     g+=T(R0,m.t-12,'Dividends, then the terminal value','style="fill:var(--ink);font-weight:600"');return g});
+    $('#ddK').innerHTML=kv([['PV of five dividends','$'+pd.toFixed(2)],['PV of terminal value','$'+pvTV.toFixed(2),'var(--red)'],['Price','$'+P.toFixed(2)]])+`<p style="font-size:14px;margin-top:10px">Terminal value = ${fr('D<sub>6</sub>','r − g')} = ${fr('$'+(D[4]*(1+g2)).toFixed(2),(10-g2*100).toFixed(2)+'%')}</p>`};
+   ['#ddG1','#ddG2'].forEach(s=>$(s).addEventListener('input',up));up()}}),
+ M({k:'Constant growth',h:'Why g must stay well below r',id:'gor',short:1,alt:'Price from the constant-growth model shooting upward as growth approaches the discount rate',
+  p:'In the constant-growth model the denominator is r − g. As the growth rate creeps toward the discount rate, the denominator heads to zero and the price heads to infinity. Small changes in g produce huge changes in value, which is exactly the DCF concern from the slides. It is also why we anchor long-run g to GDP growth.',
+  cap:'The utility from Lecture 3: it just paid $2.75 and grows forever.',
+  side:`${sl('gorG','Growth rate g',0,8,0.1,2)}${sl('gorR','Discount rate r',5,12,0.1,8.5)}<div class="big" id="gorP" style="margin-top:10px"></div><p id="gorT" style="font-size:14px"></p>`,
+  init(){const up=()=>{const gr=+$('#gorG').value/100,r=+$('#gorR').value/100;$('#gorGO').textContent=(gr*100).toFixed(1)+'%';$('#gorRO').textContent=(r*100).toFixed(1)+'%';const ok=gr<r-0.0005,P=ok?2.75*(1+gr)/(r-gr):null;
+    $('#gorP').textContent=ok?'$'+P.toFixed(2):'undefined';$('#gorT').innerHTML=ok?`P<sub>0</sub> = ${fr('2.75 × (1 + '+(gr*100).toFixed(1)+'%)',(r*100).toFixed(1)+'% − '+(gr*100).toFixed(1)+'%')}`:'The formula breaks when g ≥ r: no firm can outgrow the economy forever.';
+    live($('#gor'),(W,H)=>{const m={l:46,r:14,t:16,b:30},ymax=200,X=v=>m.l+v/.12*(W-m.l-m.r),Y=v=>H-m.b-Math.min(v,ymax)/ymax*(H-m.t-m.b);let pts=[];for(let x=0;x<r-0.002;x+=.0005)pts.push([x,2.75*(1+x)/(r-x)]);let g='';
+     for(let v=0;v<=ymax;v+=50)g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-width=".5"/>`+T(m.l-6,Y(v)+4,'$'+v,'text-anchor="end"');
+     for(let v=0;v<=.12;v+=.02)g+=T(X(v),H-m.b+16,Math.round(v*100)+'%','text-anchor="middle"');
+     g+=`<line x1="${X(r)}" x2="${X(r)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--red)" stroke-dasharray="5 4"/>`+T(X(r)+5,m.t+12,'g = r','style="fill:var(--red);font-weight:600"');
+     g+=`<path d="${pts.filter(p=>p[1]<=ymax*1.02).map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('')}" fill="none" stroke="var(--slate)" stroke-width="2.5"/>`;
+     if(ok&&P<=ymax)g+=`<circle cx="${X(gr)}" cy="${Y(P)}" r="6" fill="var(--red)" stroke="var(--bg)" stroke-width="2"/>`;
+     return g})};
+   ['#gorG','#gorR'].forEach(s=>$(s).addEventListener('input',up));up()}}),
+ M({k:'Method of comparables',h:'Borrow the market’s opinion of similar firms',id:'cmpx',short:1,alt:'Price-to-earnings ratios of five comparable firms, their average, and the implied value of the target',
+  p:'If you cannot forecast cash flows, let the market tell you what it pays for similar businesses. Pick a proxy for value (earnings here), compute what investors pay per dollar of it at each comparable firm, average, and apply that to your target.',
+  cap:'Illustrative comparables. The method is only as good as the comps: true peers, a sensible proxy, and no negative denominators.',
+  side:stepper('cmpx'),
+  init(){const C=[['Alpha',14.2],['Bravo',16.0],['Charlie',17.5],['Delta',18.8],['Echo',21.5]],avg=C.reduce((a,c)=>a+c[1],0)/5,eps=1.70;let st=0;
+   const TX=['Steps 1–3: understand the target, find its closest competitors, and choose a proxy for value. Here: earnings per share.','Step 4: for each comparable, compute market value per dollar of the proxy. These are their P/E ratios.',`Step 5: average them. Investors pay about <strong>${avg.toFixed(1)}×</strong> earnings for businesses like this.`,`Step 6: multiply by the target’s own EPS of $1.70: <strong>${avg.toFixed(1)} × $1.70 = $${(avg*eps).toFixed(2)}</strong> per share. No forecasting required, which is both the appeal and the risk.`];
+   const draw=()=>live($('#cmpx'),(W,H)=>{const m={l:24,r:24},X=v=>m.l+(v-10)/15*(W-m.l-m.r),ly=H*.46;let g=`<line x1="${X(10)}" x2="${X(25)}" y1="${ly}" y2="${ly}" stroke="var(--ink)" stroke-width="1.5"/>`;
+    for(let v=10;v<=25;v+=5)g+=`<line x1="${X(v)}" x2="${X(v)}" y1="${ly-4}" y2="${ly+4}" stroke="var(--ink)"/>`+T(X(v),ly+20,v+'×','text-anchor="middle"');
+    g+=T(m.l,24,'Price ÷ earnings per share','style="fill:var(--ink);font-weight:600"');
+    if(st>=1)C.forEach(([n,v],i)=>{g+=`<circle cx="${X(v)}" cy="${ly}" r="8" fill="var(--slate)"/>`+T(X(v),ly-(i%2?32:16),n+' '+v.toFixed(1),'text-anchor="middle" style="fill:var(--ink)"')});
+    if(st>=2)g+=`<line x1="${X(avg)}" x2="${X(avg)}" y1="${ly-50}" y2="${ly+34}" stroke="var(--red)" stroke-width="2.5"/>`+T(X(avg),ly+50,'average '+avg.toFixed(1)+'×','text-anchor="middle" style="fill:var(--red);font-weight:700"');
+    if(st>=3){const bx=W/2;g+=`<rect x="${bx-120}" y="${H-58}" width="240" height="40" fill="var(--red)"/>`+T(bx,H-33,`${avg.toFixed(1)} × $1.70 = $${(avg*eps).toFixed(2)}`,'text-anchor="middle" style="fill:#fff;font-weight:700;font-size:15px"')}
+    if(st===0)g+=T(W/2,ly-30,'Target: earnings per share $1.70','text-anchor="middle" style="fill:var(--ink);font-weight:600"');return g});
+   wireStep('cmpx',4,i=>{st=i;$('#cmpxT').innerHTML=TX[i];draw()})}}),
+ M({k:'Triangulating',h:'The football field: where the models agree',id:'ffd',short:1,alt:'Horizontal ranges of value from five models with their overlap highlighted',
+  p:'No single model is right, so estimate value several ways and line up the ranges. Where they overlap is your best estimate of intrinsic value. If the market price sits well outside that zone, you may have found a mispricing, or a reason to recheck your inputs.',
+  cap:'Ranges from the lecture slide.',
+  side:`<p style="font-size:15px">The overlap of all five ranges runs from <strong>$29 to $30</strong>.</p><p style="font-size:15px">Each model has its own blind spot: comparables trust the market, dividend models depend on payout policy, DCF hinges on the growth rate. Agreement across different methods is more convincing than precision from any one.</p>`,
+  init(){const R=[['MOC: EPS',28,32],['MOC: sales',27,33],['DDM',24,30],['DCF',29,37],['REM',28,36]];live($('#ffd'),(W,H)=>{const m={l:W<520?78:96,r:16,t:16,b:30},X=v=>m.l+(v-20)/20*(W-m.l-m.r),rh=(H-m.t-m.b)/R.length;let g=`<rect x="${X(29)}" y="${m.t-6}" width="${X(30)-X(29)}" height="${H-m.t-m.b+6}" fill="var(--red)" opacity=".18"/>`;
+   for(let v=20;v<=40;v+=5)g+=`<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--rule)" stroke-width=".5"/>`+T(X(v),H-m.b+18,'$'+v,'text-anchor="middle"');
+   R.forEach(([n,a,b],i)=>{const y=m.t+rh*i+rh*.2;g+=`<rect x="${X(a)}" y="${y}" width="${X(b)-X(a)}" height="${rh*.6}" fill="var(--slate)"/>`+T(m.l-8,y+rh*.3+4,n,'text-anchor="end" style="fill:var(--ink)"')});return g})}})];
+
+/* ---------- Lecture 7: Relevant cash flows ---------- */
+const SORT=[['A market research study you already paid for ($200K)',0,'Sunk. It is spent whether or not you accept the project.'],['A warehouse you own that could otherwise be leased out for $50K a year',1,'Opportunity cost. Using it for the project gives up that lease income.'],['The new product will steal $1M a year of sales from an existing product',1,'Side effect (erosion). It happens only because of the project.'],['$300K of extra inventory at launch, recovered when the project ends',1,'Change in NWC. Include the outflow at launch and the recovery at the end.'],['Interest on the loan used to buy the equipment',0,'Financing cost. It is a payment to financiers, captured in the discount rate, not in the cash flows.'],['Taxes on the project’s additional profit',1,'Taxes. A real cash outflow caused by the project.'],['A share of head-office overhead that will not change either way',0,'Not incremental. The cost is the same with or without the project.'],['Selling the equipment for scrap when the project ends',1,'Salvage value, after tax.']];
+LEARN['relevant-cash-flows']=[
+ M({k:'The incremental cash flow rule',h:'With the project, minus without it',id:'wwo',alt:'Firm cash flows with and without the project, and the difference',
+  p:'The cleanest way to think about relevant cash flows: forecast the whole firm’s cash flows if you accept the project and if you don’t. The difference, year by year, is the project’s cash flow. Anything that is the same in both worlds drops out automatically.',
+  cap:'Illustrative firm, $ thousands. The project costs 400 up front and adds 180 a year, but erodes 40 a year of an existing product’s cash flow.',
+  side:`<p style="font-size:15px"><strong>Sunk costs</strong> and unchanged overhead appear in both worlds, so they cancel.</p><p style="font-size:15px"><strong>Erosion</strong> shows up only in the “with” world, so it reduces the project’s cash flow: +180 − 40 = <strong>+140</strong>.</p><p style="font-size:15px">Ask of every item: <em>will this cash flow occur only if the project is accepted?</em></p>`,
+  init(){const wo=[500,500,500,500,500],wi=[100,640,640,640,640];live($('#wwo'),(W,H)=>{const m={l:40,r:10,t:30,b:34},Y=v=>m.t+(1-(v+450)/(700+450))*(H-m.t-m.b),gw=(W-m.l-m.r)/5,bw=gw*.24;let g=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)"/>`;
+   [[0,'Without','var(--mute)'],[1,'With','var(--slate)'],[2,'Difference','var(--red)']].forEach(([j,l,c],i)=>g+=`<rect x="${m.l+i*110}" y="6" width="12" height="12" fill="${c}"/>`+T(m.l+i*110+18,16,l,'style="fill:var(--ink)"'));
+   for(let t=0;t<5;t++){const x=m.l+gw*t+gw/2,d=wi[t]-wo[t];[[wo[t],'var(--mute)',-1],[wi[t],'var(--slate)',0],[d,d<0?'var(--red)':'var(--good)',1]].forEach(([v,c,o])=>{const xx=x+o*(bw+3)-bw/2;g+=`<rect x="${xx}" y="${Math.min(Y(v),Y(0))}" width="${bw}" height="${Math.abs(Y(v)-Y(0))}" fill="${c}"/>`;if(o===1)g+=T(xx+bw/2,v<0?Y(v)+14:Y(v)-5,(v>0?'+':'')+v,'text-anchor="middle" style="fill:var(--ink);font-weight:700"')});g+=T(x,H-8,'Year '+t,'text-anchor="middle" style="fill:var(--ink)"')}return g})}}),
+ M({k:'In or out?',h:'Sort the cash flows',fig:`<div id="sortL" class="sortl"></div>`,
+  p:'Decide whether each item belongs in the project’s cash flows. The reasoning appears as soon as you choose.',
+  side:`<div class="big" id="sortS">0 / 8</div><small style="color:var(--mute)">correct so far</small><p style="font-size:15px;margin-top:14px"><strong>In:</strong> changes in NWC, side effects, opportunity costs, taxes, salvage.<br><strong>Out:</strong> sunk costs and financing costs.</p><button class="sm" id="sortR">Reset</button>`,
+  init(){const draw=()=>{let ok=0;$('#sortL').innerHTML=SORT.map(([q],i)=>`<div class="sorti" data-i="${i}"><p>${q}</p><div class="row"><button class="sm" data-a="1">In</button><button class="sm" data-a="0">Out</button></div><p class="why"></p></div>`).join('');$('#sortS').textContent='0 / 8';
+    $$('#sortL .sorti').forEach(el=>{const [,a,why]=SORT[+el.dataset.i];el.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(el.dataset.done)return;el.dataset.done=1;const right=+b.dataset.a===a;if(right)ok++;b.classList.add(right?'right':'wrong');el.querySelector('.why').innerHTML=`<strong class="${right?'ok':'no'}">${a?'In':'Out'}.</strong> ${why}`;$('#sortS').textContent=`${ok} / 8`})})};
+   $('#sortR').onclick=draw;draw()}}),
+ M({k:'Salvage value',h:'Only the gain over book value is taxed',id:'ats',short:1,alt:'Sale price split into book value and taxable gain, with the tax removed',
+  p:'When you sell an asset at the end of a project, the tax authority cares about the gain over its book value, not the whole price. The book value portion comes back to you tax-free; the gain is taxed. Sell below book value and the loss saves you taxes instead.',
+  cap:'Lecture example: bought for $2.5M, $2.0M of accumulated depreciation, so book value is $0.5M.',
+  side:`${sl('atsS','Sale price ($M)',0,2.5,0.05,1.5)}${sl('atsT','Tax rate',0,50,1,35)}<div id="atsK"></div>`,
+  init(){const up=()=>{const S=+$('#atsS').value,t=+$('#atsT').value/100,BV=.5,tax=(S-BV)*t,AT=S-tax;$('#atsSO').textContent='$'+S.toFixed(2)+'M';$('#atsTO').textContent=(t*100).toFixed(0)+'%';
+    live($('#ats'),(W,H)=>{const m={l:W<520?90:120,r:20},X=v=>m.l+v/2.8*(W-m.l-m.r),bh=36,y1=40,y2=130;let g=`<defs><pattern id="atsH" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--red)" stroke-width="3"/></pattern></defs>`;
+     g+=T(m.l-10,y1+bh/2+4,'Sale price','text-anchor="end" style="fill:var(--ink);font-weight:600"')+T(m.l-10,y2+bh/2+4,'After tax','text-anchor="end" style="fill:var(--ink);font-weight:600"');
+     const bvp=Math.min(S,BV);g+=`<rect x="${X(0)}" y="${y1}" width="${X(bvp)-X(0)}" height="${bh}" fill="var(--slate)"/>`;if(S>BV)g+=`<rect x="${X(BV)}" y="${y1}" width="${X(S)-X(BV)}" height="${bh}" fill="color-mix(in srgb,var(--slate) 45%,var(--bg))"/>`;
+     g+=`<line x1="${X(BV)}" x2="${X(BV)}" y1="${y1-10}" y2="${y2+bh+10}" stroke="var(--ink)" stroke-dasharray="4 3"/>`+T(X(BV),y1-14,'book value $0.5M','text-anchor="middle"');
+     if(S>BV){g+=T((X(BV)+X(S))/2,y1+bh/2+4,'gain','text-anchor="middle" style="fill:var(--ink)"');g+=`<rect x="${X(0)}" y="${y2}" width="${X(AT)-X(0)}" height="${bh}" fill="var(--slate)"/><rect x="${X(AT)}" y="${y2}" width="${X(S)-X(AT)}" height="${bh}" fill="url(#atsH)" stroke="var(--red)"/>`+T((X(AT)+X(S))/2,y2+bh+18,'tax −$'+tax.toFixed(3)+'M','text-anchor="middle" style="fill:var(--red);font-weight:600"')}
+     else{g+=`<rect x="${X(0)}" y="${y2}" width="${X(S)-X(0)}" height="${bh}" fill="var(--slate)"/><rect x="${X(S)}" y="${y2}" width="${X(AT)-X(S)}" height="${bh}" fill="var(--good)"/>`;if(AT>S)g+=T((X(S)+X(AT))/2,y2+bh+18,'tax saved +$'+(-tax).toFixed(3)+'M','text-anchor="middle" style="fill:var(--good);font-weight:600"')}
+     g+=T(X(AT)+6,y2+bh/2+4,'$'+AT.toFixed(3)+'M','style="fill:var(--ink);font-weight:700"').replace(`x="${X(AT)+6}"`,`x="${Math.max(X(AT),X(S))+6}"`);return g});
+    $('#atsK').innerHTML=kv([['Gain (loss) on sale','$'+(S-BV).toFixed(3)+'M'],['Taxes',(tax>=0?'−':'+')+'$'+Math.abs(tax).toFixed(3)+'M',tax>=0?'var(--bad)':'var(--good)'],['After-tax salvage','$'+AT.toFixed(3)+'M']])};
+   ['#atsS','#atsT'].forEach(s=>$(s).addEventListener('input',up));up()}})];
+
+/* ---------- Lecture 8: Scenario, sensitivity, simulation ---------- */
+const solar=(cost=10000,sav=1500,salv=2000,r=.06,n=15)=>-cost+sav*(1-Math.pow(1+r,-n))/r+salv/Math.pow(1+r,n);
+LEARN['risk-analysis']=[
+ M({k:'Simulation analysis',h:'Not one NPV, but thousands',id:'mc',alt:'Histogram of simulated solar-panel NPVs with the share below zero highlighted',
+  p:'The Solar Panel case has one NPV if you trust every input exactly. But the annual savings and the resale value are guesses. Simulation replaces each guess with a range of possibilities, recomputes NPV thousands of times, and shows you the whole distribution. Now you can ask the question that matters: how likely is this to destroy value?',
+  cap:'Solar case from Lecture 3: $10,000 cost, 15 years, 6% discount rate. Annual savings are normally distributed around $1,500; resale value around $2,000 (standard deviation $600).',
+  side:`${sl('mcSD','Uncertainty in annual savings (std. dev.)',50,800,50,350)}<div class="row" style="margin-top:10px"><button class="pri sm" id="mcRun">Run 1,000 trials</button><button class="sm" id="mcClr">Reset</button></div><div id="mcK"></div>`,
+  init(){let res=[];const base=solar(),N=nrm(Math.random);const draw=()=>{const n=res.length,neg=res.filter(v=>v<0).length,mean=n?res.reduce((a,b)=>a+b,0)/n:0;
+    $('#mcK').innerHTML=kv([['Trials',n0(n)],['Static NPV',fmt(base)],['Average simulated NPV',n?fmt(mean):'—'],['Chance NPV < 0',n?(neg/n*100).toFixed(1)+'%':'—',n?'var(--bad)':0]]);
+    live($('#mc'),(W,H)=>{const m={l:14,r:14,t:24,b:32},lo=-12000,hi=22000,bin=1000,nb=(hi-lo)/bin,cnt=Array(nb).fill(0);res.forEach(v=>{const i=Math.floor((v-lo)/bin);if(i>=0&&i<nb)cnt[i]++});const mx=Math.max(10,...cnt),X=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r),Y=c=>H-m.b-c/mx*(H-m.t-m.b);let g='';
+     cnt.forEach((c,i)=>{const a=lo+i*bin;g+=`<rect x="${X(a)+1}" y="${Y(c)}" width="${X(a+bin)-X(a)-2}" height="${H-m.b-Y(c)}" fill="${a<0?'var(--red)':'var(--slate)'}"/>`});
+     g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="var(--ink)"/><line x1="${X(0)}" x2="${X(0)}" y1="${m.t-8}" y2="${H-m.b}" stroke="var(--ink)" stroke-width="1.5"/><line x1="${X(base)}" x2="${X(base)}" y1="${m.t-8}" y2="${H-m.b}" stroke="var(--ink)" stroke-dasharray="5 4"/>`+T(X(base)+5,m.t,'static NPV','style="fill:var(--ink)"');
+     for(let v=-10000;v<=20000;v+=W<520?10000:5000)g+=T(X(v),H-m.b+16,short(v),'text-anchor="middle"');if(!n)g+=T(W/2,H/2,'Press “Run 1,000 trials”','text-anchor="middle" style="fill:var(--ink);font-size:15px"');return g})};
+   $('#mcRun').onclick=()=>{const sd=+$('#mcSD').value;for(let i=0;i<1000;i++){const s=1500+sd*N(),v=Math.max(0,2000+600*N());res.push(solar(10000,s,v))}draw()};$('#mcClr').onclick=()=>{res=[];draw()};
+   $('#mcSD').addEventListener('input',()=>{$('#mcSDO').textContent='$'+$('#mcSD').value;res=[];draw()});$('#mcSDO').textContent='$350';draw()}}),
+ M({k:'Sensitivity analysis',h:'Which input can hurt you most?',id:'trn',short:1,alt:'Tornado chart ranking the solar inputs by how much they swing NPV',
+  p:'Move each input up and down by the same amount, one at a time, and see how far NPV swings. Sorted from biggest swing to smallest, the bars form a tornado. The inputs at the top are the ones worth more research before you commit.',
+  cap:'Each input moved 20% below and above its base value (life ±3 years). Base NPV ≈ $5,403.',
+  side:`<p style="font-size:15px">Annual savings dominate: a 20% miss moves NPV by about $2,900 either way. The resale value barely matters, because it arrives 15 years from now and is discounted heavily.</p><p style="font-size:15px">Spreadsheets make this a data table, limited to two inputs at a time. Simulation lets every input move together.</p>`,
+  init(){const b=solar(),I=[['Annual savings',v=>solar(10000,1500*v)],['Upfront cost',v=>solar(10000*v)],['Discount rate',v=>solar(10000,1500,2000,.06*v)],['Life (years)',v=>solar(10000,1500,2000,.06,v<1?12:18)],['Resale value',v=>solar(10000,1500,2000*v)]].map(([n,f])=>[n,f(.8),f(1.2)]).sort((a,c)=>Math.abs(c[2]-c[1])-Math.abs(a[2]-a[1]));
+   live($('#trn'),(W,H)=>{const m={l:W<520?96:120,r:46,t:14,b:28},lo=Math.min(...I.flat().filter(x=>typeof x==='number')),hi=Math.max(...I.flat().filter(x=>typeof x==='number')),X=v=>m.l+(v-lo+1500)/(hi-lo+3000)*(W-m.l-m.r),rh=(H-m.t-m.b)/I.length;let g=`<line x1="${X(b)}" x2="${X(b)}" y1="${m.t-4}" y2="${H-m.b}" stroke="var(--ink)" stroke-width="1.5"/>`+T(X(b),H-8,'base '+short(b),'text-anchor="middle" style="fill:var(--ink)"');
+    I.forEach(([n,a,c],i)=>{const y=m.t+rh*i+rh*.18,h=rh*.64,l=Math.min(a,c),r=Math.max(a,c);g+=`<rect x="${X(l)}" y="${y}" width="${X(b)-X(l)}" height="${h}" fill="var(--red)"/><rect x="${X(b)}" y="${y}" width="${X(r)-X(b)}" height="${h}" fill="var(--slate)"/>`+T(m.l-8,y+h/2+4,n,'text-anchor="end" style="fill:var(--ink)"')+T(X(l)-4,y+h/2+4,short(Math.round(l/100)*100),'text-anchor="end"')+T(X(r)+4,y+h/2+4,short(Math.round(r/100)*100))});return g})}}),
+ M({k:'Probability primer',h:'Reading a normal distribution: 68, 95, 99.7',id:'nrm',short:1,alt:'Normal curve of US male heights with one, two or three standard deviations shaded',
+  p:'A normal distribution is completely described by its mean and standard deviation. About 68% of outcomes fall within one standard deviation of the mean, 95% within two, and 99.7% within three. The same logic lets you read a simulated NPV distribution.',
+  cap:'Average US male height: 70 inches, standard deviation 4 inches (the lecture example).',
+  side:`${seg('nrmS',['± 1σ','± 2σ','± 3σ'])}<p id="nrmT" style="font-size:15px;margin-top:14px"></p>`,
+  init(){let k=1;const P=['68%','95%','99.7%'];const draw=()=>{live($('#nrm'),(W,H)=>{const m={l:14,r:14,t:20,b:34},mu=70,sd=4,X=v=>m.l+(v-54)/32*(W-m.l-m.r),f=v=>Math.exp(-((v-mu)**2)/(2*sd*sd)),Y=v=>H-m.b-f(v)*(H-m.t-m.b);let pts=[];for(let v=54;v<=86;v+=.25)pts.push([v,Y(v)]);
+    const a=mu-k*sd,b=mu+k*sd,band=pts.filter(p=>p[0]>=a&&p[0]<=b);let g=`<path d="M${X(a)} ${H-m.b} ${band.map(p=>'L'+X(p[0]).toFixed(1)+' '+p[1].toFixed(1)).join('')} L${X(b)} ${H-m.b} Z" fill="var(--slate)" opacity=".85"/>`;
+    g+=`<path d="${pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+p[1].toFixed(1)).join('')}" fill="none" stroke="var(--ink)" stroke-width="2"/><line x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="var(--ink)"/>`;
+    for(let j=-3;j<=3;j++)g+=T(X(mu+j*sd),H-m.b+16,(mu+j*sd)+'″','text-anchor="middle" style="fill:'+(Math.abs(j)===k?'var(--red)':'var(--mute)')+';font-weight:'+(Math.abs(j)===k?700:400)+'"');
+    g+=T(X(mu),Y(mu)+ (H-m.b-Y(mu))*.55,P[k-1],'text-anchor="middle" style="fill:#fff;font-weight:700;font-size:20px"');return g});
+    $('#nrmT').innerHTML=`About <strong>${P[k-1]}</strong> of US men are between <strong>${70-4*k} and ${70+4*k} inches</strong> tall.`};
+   wireSeg('nrmS',i=>{k=i+1;draw()});draw()}})];
+
+/* ---------- Lecture 9: WACC ---------- */
+LEARN.wacc=[
+ M({k:'Not all risk gets rewarded',h:'Diversification removes some risk, not all',id:'div',short:1,alt:'Portfolio risk falling as stocks are added, leveling off at the systematic risk floor',
+  p:'A single stock carries risks specific to that company (a recall, a lawsuit, a strike) and risks that hit every company (recessions, interest rates, inflation). Add more stocks and the company-specific risks start canceling out. What is left is systematic risk, which no amount of diversification removes. Because investors can shed the rest for free, only systematic risk earns a premium.',
+  cap:'Illustrative: each stock has 18% systematic and 35% company-specific volatility, equally weighted portfolio.',
+  side:`${sl('divN','Number of stocks in the portfolio',1,60,1,1)}<div id="divK"></div>`,
+  init(){const s=.18,u=.35,sig=n=>Math.sqrt(s*s+u*u/n);const up=()=>{const n=+$('#divN').value;$('#divNO').textContent=n;
+    live($('#div'),(W,H)=>{const m={l:42,r:14,t:16,b:30},X=v=>m.l+(v-1)/59*(W-m.l-m.r),Y=v=>H-m.b-v/.42*(H-m.t-m.b);let pts=[];for(let k=1;k<=60;k+=.25)pts.push([k,sig(k)]);let g='';
+     g+=`<path d="M${X(1)} ${Y(s)} ${pts.map(p=>'L'+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('')} L${X(60)} ${Y(s)} Z" fill="var(--red)" opacity=".22"/><rect x="${X(1)}" y="${Y(s)}" width="${X(60)-X(1)}" height="${H-m.b-Y(s)}" fill="var(--slate)" opacity=".35"/>`;
+     g+=`<path d="${pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('')}" fill="none" stroke="var(--ink)" stroke-width="2.5"/>`;
+     g+=T(X(60)-6,Y(s)+20,'Systematic: rewarded','text-anchor="end" style="fill:var(--ink);font-weight:600"')+T(X(8),Y(sig(8))-14,'Company-specific: diversified away','style="fill:var(--red);font-weight:600"');
+     for(let v=0;v<=.4;v+=.1)g+=T(m.l-6,Y(v)+4,Math.round(v*100)+'%','text-anchor="end"');[1,10,20,30,40,50,60].forEach(v=>g+=T(X(v),H-m.b+16,v,'text-anchor="middle"'));
+     g+=`<circle cx="${X(n)}" cy="${Y(sig(n))}" r="7" fill="var(--red)" stroke="var(--bg)" stroke-width="2"/>`;return g});
+    const t=sig(n);$('#divK').innerHTML=kv([['Total risk',(t*100).toFixed(1)+'%'],['Systematic',(s*100).toFixed(1)+'%'],['Company-specific left',(Math.sqrt(u*u/n)*100).toFixed(1)+'%','var(--bad)']])};
+   $('#divN').addEventListener('input',up);up()}}),
+ M({k:'Estimating beta',h:'Beta is the slope',id:'bet',alt:'Scatter of a stock’s monthly returns against the market’s, with the regression line',
+  p:'Plot a stock’s monthly returns against the market’s. If the stock tends to move more than the market, the cloud tilts steeply; if less, it lies flatter. The slope of the best-fit line is beta: how much systematic risk the stock carries, scaled so the market itself is exactly 1.',
+  cap:'Simulated: 60 months of returns. The dashed line has a slope of 1 (the market).',
+  side:`${sl('betB','The stock’s true sensitivity to the market',0,2,0.05,1.3)}<div class="big" id="betE" style="margin-top:10px"></div><small style="color:var(--mute)">beta estimated by regression</small><p style="font-size:14px;margin-top:12px">In practice: R<sub>i,t</sub> = α + β·R<sub>mkt,t</sub>, estimated in Excel with =SLOPE(stock, market).</p>`,
+  init(){const u=rng(7),N=nrm(u),mk=[],ep=[];for(let i=0;i<60;i++){mk.push(.01+.045*N());ep.push(.03*N())}
+   const up=()=>{const b=+$('#betB').value;$('#betBO').textContent=b.toFixed(2);const st=mk.map((x,i)=>.002+b*x+ep[i]),mx=mk.reduce((a,c)=>a+c,0)/60,my=st.reduce((a,c)=>a+c,0)/60;let sxy=0,sxx=0;mk.forEach((x,i)=>{sxy+=(x-mx)*(st[i]-my);sxx+=(x-mx)**2});const be=sxy/sxx,al=my-be*mx;$('#betE').textContent='β = '+be.toFixed(2);
+    live($('#bet'),(W,H)=>{const m={l:40,r:14,t:14,b:28},R=.3,sz=Math.min(W-m.l-m.r,H-m.t-m.b),ox=m.l+(W-m.l-m.r-sz)/2,X=v=>ox+(v+R/2)/R*sz,Y=v=>m.t+(1-(v+R/2)/R*1)*sz;let g='';
+     [-.1,0,.1].forEach(v=>{g+=`<line x1="${X(-R/2)}" x2="${X(R/2)}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-width="${v?.5:1.2}"/><line x1="${X(v)}" x2="${X(v)}" y1="${Y(-R/2)}" y2="${Y(R/2)}" stroke="var(--rule)" stroke-width="${v?.5:1.2}"/>`+T(X(v),Y(-R/2)+16,Math.round(v*100)+'%','text-anchor="middle"')+T(X(-R/2)-6,Y(v)+4,Math.round(v*100)+'%','text-anchor="end"')});
+     mk.forEach((x,i)=>{if(Math.abs(st[i])<R/2)g+=`<circle cx="${X(x)}" cy="${Y(st[i])}" r="4" fill="var(--slate)" opacity=".8"/>`});
+     g+=`<line x1="${X(-R/2)}" y1="${Y(-R/2)}" x2="${X(R/2)}" y2="${Y(R/2)}" stroke="var(--mute)" stroke-dasharray="5 4"/>`;
+     const x1=Math.max(-R/2,(-R/2-al)/(be||1e-9)),x2=Math.min(R/2,(R/2-al)/(be||1e-9)),xa=be>0?x1:-R/2,xb=be>0?x2:R/2;g+=`<line x1="${X(xa)}" y1="${Y(al+be*xa)}" x2="${X(xb)}" y2="${Y(al+be*xb)}" stroke="var(--red)" stroke-width="2.5"/>`;
+     g+=T(X(R/2)-4,Y(-R/2)-6,'market return →','text-anchor="end"')+T(X(-R/2)+4,Y(R/2)+12,'↑ stock return');return g})};
+   $('#betB').addEventListener('input',up);up()}}),
+ M({k:'Putting it together',h:'WACC: the blended cost of every dollar',id:'wac',alt:'Equity and debt drawn as blocks whose width is their share of capital and whose height is their cost',
+  p:'Picture the firm’s capital as a row of blocks. Each block’s width is its share of the money raised; its height is what that money costs. WACC is the average height. Slide toward more debt and two things happen: equity gets riskier (its beta relevers upward, so its block grows taller), while debt stays cheap, cheaper still after the interest tax deduction.',
+  cap:'Built from the J&J / Boston Scientific example: asset beta 0.86, risk-free rate 6%, market risk premium 6.9%. Assumed pre-tax cost of debt 7%, tax rate 25%.',
+  side:`${sl('wacD','Debt as a share of capital, D/V',0,60,1,30)}<div id="wacK"></div>`,
+  init(){const up=()=>{const dv=+$('#wacD').value/100,ev=1-dv,bE=.86/ev,RE=.06+bE*.069,RD=.07,T_=.25,ad=RD*(1-T_),W_=ev*RE+dv*ad;$('#wacDO').textContent=(dv*100).toFixed(0)+'%';
+    live($('#wac'),(W,H)=>{const m={l:40,r:14,t:20,b:34},X=v=>m.l+v*(W-m.l-m.r),Y=v=>H-m.b-v/.22*(H-m.t-m.b);let g='';
+     for(let v=0;v<=.2;v+=.05)g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-width=".5"/>`+T(m.l-6,Y(v)+4,Math.round(v*100)+'%','text-anchor="end"');
+     g+=`<rect x="${X(0)}" y="${Y(RE)}" width="${X(ev)-X(0)}" height="${H-m.b-Y(RE)}" fill="var(--slate)"/>`+T(X(ev/2),Y(RE)+20,'Equity '+(RE*100).toFixed(1)+'%','text-anchor="middle" style="fill:#fff;font-weight:700"');
+     if(dv>0){g+=`<rect x="${X(ev)}" y="${Y(RD)}" width="${X(1)-X(ev)}" height="${H-m.b-Y(RD)}" fill="none" stroke="var(--ink)" stroke-dasharray="4 3"/><rect x="${X(ev)}" y="${Y(ad)}" width="${X(1)-X(ev)}" height="${H-m.b-Y(ad)}" fill="var(--mute)"/>`;if(X(1)-X(ev)>70)g+=T(X(ev+dv/2),Y(ad)+18,'Debt '+(ad*100).toFixed(2)+'%','text-anchor="middle" style="fill:#fff;font-weight:700"')+T(X(ev+dv/2),Y(RD)-6,'pre-tax 7%','text-anchor="middle"')}
+     g+=`<line x1="${X(0)}" x2="${X(1)}" y1="${Y(W_)}" y2="${Y(W_)}" stroke="var(--red)" stroke-width="3"/>`+T(X(1)-4,Y(W_)-8,'WACC '+(W_*100).toFixed(2)+'%','text-anchor="end" style="fill:var(--red);font-weight:700"');
+     g+=T(X(ev/2),H-m.b+18,'E/V '+(ev*100).toFixed(0)+'%','text-anchor="middle" style="fill:var(--ink)"');if(dv>.08)g+=T(X(ev+dv/2),H-m.b+18,'D/V '+(dv*100).toFixed(0)+'%','text-anchor="middle" style="fill:var(--ink)"');return g});
+    $('#wacK').innerHTML=kv([['Equity beta = 0.86 × V/E',bE.toFixed(2)],['Cost of equity (CAPM)',(RE*100).toFixed(2)+'%'],['After-tax cost of debt',(ad*100).toFixed(2)+'%'],['WACC',(W_*100).toFixed(2)+'%','var(--red)']])+`<p style="font-size:14px;margin-top:10px">At D/V = 30% this reproduces the slide: equity beta 1.23, cost of equity ≈ 14.5%.</p>`};
+   $('#wacD').addEventListener('input',up);up()}})];
+
+/* ================= PRACTICE engine ================= */
+const rr=(a,b,st=1)=>{const n=Math.round((b-a)/st);return +(a+st*Math.floor(Math.random()*(n+1))).toFixed(6)};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const $$n=(x,d=0)=>n0(x,d);
+const D$=(x,d=0)=>fmt(x,d);
+const dt=(rows,cols=2)=>`<div class="scroll"><table class="dt">${rows.map(r=>`<tr>${r.map((c,i)=>i%2?`<td>${c}</td>`:`<td style="text-align:left;color:var(--mute)">${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const PR={};
+function practiceHTML(id){const P=PR[id];return `<div class="band alt" id="practice-${id}"><div class="kicker"><b>Practice</b> · New numbers every time</div><h2>Practice problems</h2>
+ ${seg('pt-'+id,P.types.map(t=>t.n))}<div id="pq-${id}" style="margin-top:16px"></div><div class="ans" id="pa-${id}"></div>
+ <div class="row"><button class="pri" id="pc-${id}">Check answers</button><button id="ps-${id}">Show solution</button><button id="pn-${id}">New problem</button><span id="psc-${id}" style="color:var(--mute);font-size:14px"></span></div>
+ <div id="pso-${id}" style="margin-top:16px"></div><p style="font-size:13px;color:var(--mute);margin-top:10px">Answers within about 0.5% (or the stated rounding) count as correct. Enter percentages as numbers, e.g. 7.25 for 7.25%.</p></div>
+ <div class="band"><div class="kicker"><b>Concept check</b></div><h2>Test your intuition</h2>${quizHTML('qz-'+id)}</div>`}
+function initPractice(id){const P=PR[id];let k=0,cur,sc=[0,0];
+ const neu=()=>{cur=P.types[k].g();$('#pq-'+id).innerHTML=cur.q;$('#pa-'+id).innerHTML=cur.f.map((f,i)=>`<div><label for="pf-${id}-${i}">${f.l}</label>${f.o?`<select id="pf-${id}-${i}"><option value="">Choose</option>${f.o.map(o=>`<option>${o}</option>`).join('')}</select>`:`<input id="pf-${id}-${i}" inputmode="decimal" placeholder="${f.u==='%'?'%':f.u==='$'?'$':''}">`}<div class="mark" id="pm-${id}-${i}"></div></div>`).join('');$('#pso-'+id).innerHTML=''};
+ $('#pn-'+id).onclick=neu;$('#ps-'+id).onclick=()=>{$('#pso-'+id).innerHTML=`<div class="card">${cur.s}</div>`};
+ $('#pc-'+id).onclick=()=>{let ok=0,n=0;cur.f.forEach((f,i)=>{const el=$(`#pf-${id}-${i}`),m=$(`#pm-${id}-${i}`),raw=el.value.trim();if(!raw){m.innerHTML='<span class="err">Enter an answer</span>';return}
+   let good;if(f.o)good=raw===f.a;else{const v=num(raw);if(isNaN(v)){m.innerHTML='<span class="err">Enter a number</span>';return}const tol=f.t??Math.max(Math.abs(f.a)*.005,.01);good=Math.abs(v-f.a)<=tol}
+   n++;ok+=good;m.innerHTML=good?'<span class="ok">Correct</span>':'<span class="err">Not quite</span>'});if(n){sc[0]+=ok;sc[1]+=n;$('#psc-'+id).textContent=`Session: ${sc[0]} of ${sc[1]} correct`}};
+ wireSeg('pt-'+id,i=>{k=i;neu()});neu();initQuiz('qz-'+id,P.quiz)}
+function quizHTML(p){return `<div class="card" style="max-width:760px"><div class="row" style="justify-content:space-between"><span id="${p}N" style="color:var(--mute);font-size:14px"></span><span id="${p}S" style="color:var(--mute);font-size:14px"></span></div><h3 id="${p}Q" style="font-family:Inter,sans-serif;font-weight:500;font-size:18px;line-height:1.4;margin-top:8px"></h3><div id="${p}O"></div><p id="${p}E" style="font-size:15px;margin-top:10px"></p><button class="pri" id="${p}X">Next question</button></div>`}
+function initQuiz(p,QZ){let i=0,s=0,a=0;const show=()=>{const [q,o,c,e]=QZ[i];$('#'+p+'N').textContent=`Question ${i+1} of ${QZ.length}`;$('#'+p+'S').textContent=a?`Score: ${s} of ${a}`:'';$('#'+p+'Q').textContent=q;$('#'+p+'E').textContent='';$('#'+p+'X').style.display='none';
+  const O=$('#'+p+'O');O.dataset.done='';O.innerHTML=o.map((x,j)=>`<button class="opt" data-i="${j}">${esc(x)}</button>`).join('');
+  O.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(O.dataset.done)return;O.dataset.done=1;const j=+b.dataset.i;a++;if(j===c)s++;b.classList.add(j===c?'right':'wrong');O.querySelectorAll('.opt')[c].classList.add('right');$('#'+p+'E').innerHTML=`<strong>${j===c?'Right.':'Not quite.'}</strong> ${esc(e)}`;$('#'+p+'S').textContent=`Score: ${s} of ${a}`;$('#'+p+'X').style.display='';$('#'+p+'X').textContent=i===QZ.length-1?'Start over':'Next question'})};
+ $('#'+p+'X').onclick=()=>{i=(i+1)%QZ.length;if(!i){s=0;a=0}show()};show()}
+
+/* ---------- 1 FCFF ---------- */
+PR.fcff={types:[
+ {n:'Free cash flow',g(){const EBIT=rr(600,1600,1),Dep=rr(150,500,1),Tr=pick([.21,.25,.3]),Tax=Math.round(EBIT*Tr),bN=rr(1500,3200,1),cap=rr(Dep-100,Dep+500,1),eN=bN+cap-Dep,bCA=rr(2000,4000,1),bCL=rr(1000,2400,1),eCA=bCA+rr(-300,500,1),eCL=bCL+rr(-300,400,1);
+  const OCF=EBIT+Dep-Tax,NCS=eN-bN+Dep,dN=(eCA-eCL)-(bCA-bCL),F=OCF-NCS-dN;
+  return {q:`<p>Compute free cash flow to the firm ($ millions). Taxes are already computed on EBIT.</p>`+dt([['EBIT',$$n(EBIT),'End NFA',$$n(eN),'End current assets',$$n(eCA)],['Depreciation',$$n(Dep),'Beg. NFA',$$n(bN),'End current liabilities',$$n(eCL)],['Taxes',$$n(Tax),'','','Beg. current assets',$$n(bCA)],['','','','','Beg. current liabilities',$$n(bCL)]]),
+  f:[{l:'Operating cash flow',a:OCF,t:1},{l:'Net capital spending',a:NCS,t:1},{l:'Change in NWC',a:dN,t:1},{l:'Free cash flow',a:F,t:1}],
+  s:`<p>OCF = EBIT + Dep − Taxes = ${$$n(EBIT)} + ${$$n(Dep)} − ${$$n(Tax)} = <strong>${$$n(OCF)}</strong><br>NCS = End NFA − Beg NFA + Dep = ${$$n(eN)} − ${$$n(bN)} + ${$$n(Dep)} = <strong>${$$n(NCS)}</strong><br>ΔNWC = (${$$n(eCA)} − ${$$n(eCL)}) − (${$$n(bCA)} − ${$$n(bCL)}) = <strong>${$$n(dN)}</strong><br>FCF = ${$$n(OCF)} − ${$$n(NCS)} − (${$$n(dN)}) = <strong>${$$n(F)}</strong></p>`}}},
+ {n:'Financing side',g(){const bD=rr(300,900,1),eD=bD+rr(-150,150,1),I=rr(20,120,1),bS=rr(200,600,1),eS=bS+rr(-80,150,1),Dv=rr(50,400,1),cr=(bD-eD)+I,sh=(bS-eS)+Dv;
+  return {q:`<p>Use the financing side to compute the firm’s free cash flow ($ millions). Common stock includes paid-in capital.</p>`+dt([['Beg. long-term debt',$$n(bD),'Beg. common stock',$$n(bS)],['End long-term debt',$$n(eD),'End common stock',$$n(eS)],['Interest paid',$$n(I),'Dividends paid',$$n(Dv)]]),
+  f:[{l:'Cash flow to creditors',a:cr,t:1},{l:'Cash flow to shareholders',a:sh,t:1},{l:'Free cash flow',a:cr+sh,t:1}],
+  s:`<p>To creditors = debt paid down + interest = (${$$n(bD)} − ${$$n(eD)}) + ${$$n(I)} = <strong>${$$n(cr)}</strong><br>To shareholders = net repurchases + dividends = (${$$n(bS)} − ${$$n(eS)}) + ${$$n(Dv)} = <strong>${$$n(sh)}</strong><br>FCF = <strong>${$$n(cr+sh)}</strong>. A negative piece means that group put money in on net.</p>`}}},
+ {n:'Capital spending',g(){const b=rr(20,120,.5),d=rr(2,12,.1),c=rr(0,25,.1),e=+(b+c-d).toFixed(1);
+  return {q:`<p>A firm began the year with <strong>$${b.toFixed(1)}M</strong> of net fixed assets and ended with <strong>$${e.toFixed(1)}M</strong>. Depreciation for the year was <strong>$${d.toFixed(1)}M</strong>. How much did it spend on fixed assets?</p>`,
+  f:[{l:'Capital spending ($M)',a:+(e-b+d).toFixed(1),t:.05}],s:`<p>CapEx = End NFA − Beg NFA + Depreciation = ${e.toFixed(1)} − ${b.toFixed(1)} + ${d.toFixed(1)} = <strong>$${(e-b+d).toFixed(1)}M</strong>.</p>`}}}],
+ quiz:[['Why do we start the FCFF calculation with EBIT rather than EBT?',['EBIT is easier to find','Interest is a payment to financiers and must stay inside FCF','EBT ignores depreciation','Taxes are only paid on EBIT'],1,'FCFF is cash available to all financiers. Subtracting interest would remove the creditors’ share.'],
+  ['In the FCFF calculation, taxes are computed on…',['EBT','EBIT','Net income','Operating cash flow'],1,'Taxes = EBIT × tax rate. The tax benefit of interest shows up later, in the after-tax cost of debt inside WACC.'],
+  ['Net fixed assets rose from $50M to $52M and depreciation was $6M. Capital spending was…',['$2M','$6M','$8M','$4M'],2,'CapEx = 52 − 50 + 6 = $8M. Depreciation reduced NFA, so it has to be added back.'],
+  ['Net working capital increased by $40M this year. Free cash flow…',['Rises by $40M','Falls by $40M','Is unaffected','Falls by $40M × (1 − T)'],1,'More inventory and receivables tie up cash, so an increase in NWC is subtracted.'],
+  ['GAAP cash flow from operations starts from net income. To get closer to the FCFF view, you…',['Subtract interest','Add back after-tax interest, I(1 − T)','Add back taxes','Subtract depreciation'],1,'EBT(1 − T) + I(1 − T) = EBIT(1 − T): the Netflix fix from the lecture.']]};
+
+/* ---------- 2 Forecasting ---------- */
+PR.forecasting={types:[
+ {n:'External funds needed',g(){const S0=rr(2,10,1)*500,AS=pick([.8,.9,1,1.2]),LS=pick([.1,.15,.2]),m=pick([.05,.06,.08,.1]),d=pick([.3,.4,.5]),g=pick([.1,.15,.2,.25]),S1=S0*(1+g),dS=S1-S0,A1=AS*S1,RE=m*S1*(1-d),E=(AS-LS)*dS-RE;
+  return {q:`<p>Last year’s sales were <strong>${D$(S0)}M</strong>. Assets are ${(AS*100).toFixed(0)}% of sales and spontaneous liabilities ${(LS*100).toFixed(0)}% of sales; both vary with sales. Long-term debt and existing equity stay fixed. Net profit margin is ${(m*100).toFixed(0)}% and the payout ratio is ${(d*100).toFixed(0)}%. Sales are expected to grow <strong>${(g*100).toFixed(0)}%</strong>.</p>`,
+  f:[{l:'Projected total assets ($M)',a:A1},{l:'Addition to retained earnings ($M)',a:RE},{l:'External funds needed ($M)',a:E}],
+  s:`<p>Sales next year = ${D$(S0)} × ${1+g} = ${D$(S1)}M, so ΔSales = ${D$(dS)}M.<br>Assets = ${AS} × ${D$(S1)} = <strong>${D$(A1)}M</strong>.<br>Addition to RE = margin × sales × (1 − payout) = ${m} × ${D$(S1)} × ${1-d} = <strong>${D$(RE,1)}M</strong>.<br>EFN = (A/S − L/S) × ΔSales − addition to RE = (${AS} − ${LS}) × ${D$(dS)} − ${D$(RE,1)} = <strong>${D$(E,1)}M</strong>${E<0?' (a surplus)':''}.</p>`}}},
+ {n:'Growth rates',g(){const A=rr(500,2000,10),E_=Math.round(A*rr(.4,.7,.05)),NI=Math.round(A*rr(.04,.12,.005)),Dv=Math.round(NI*pick([.2,.3,.4,.5])),ROA=NI/A,ROE=NI/E_,b=1-Dv/NI,ig=ROA*b/(1-ROA*b),sg=ROE*b/(1-ROE*b);
+  return {q:`<p>Net income ${D$(NI)}M, dividends ${D$(Dv)}M, total assets ${D$(A)}M, total equity ${D$(E_)}M. Compute the internal and sustainable growth rates.</p>`,
+  f:[{l:'Retention ratio b (%)',a:b*100,t:.1,u:'%'},{l:'Internal growth rate (%)',a:ig*100,t:.05,u:'%'},{l:'Sustainable growth rate (%)',a:sg*100,t:.05,u:'%'}],
+  s:`<p>ROA = ${NI}/${A} = ${(ROA*100).toFixed(2)}%; ROE = ${NI}/${E_} = ${(ROE*100).toFixed(2)}%; b = 1 − ${Dv}/${NI} = ${(b*100).toFixed(1)}%.<br>Internal = ${fr('ROA × b','1 − ROA × b')} = <strong>${(ig*100).toFixed(2)}%</strong><br>Sustainable = ${fr('ROE × b','1 − ROE × b')} = <strong>${(sg*100).toFixed(2)}%</strong></p>`}}}],
+ quiz:[['Which accounts typically vary directly with sales in a percentage-of-sales forecast?',['Long-term debt and common stock','Most current assets and current liabilities, plus COGS and SG&A','Interest expense and dividends','Only cash'],1,'Inventory, receivables, payables and operating costs scale with activity; financing accounts are set by decisions.'],
+  ['A positive external funds needed (EFN) means…',['The firm has a cash surplus','The firm must raise outside debt or equity to support the forecast','Sales are falling','The balance sheet already balances'],1,'EFN is the plug that brings assets and financing into balance.'],
+  ['The sustainable growth rate exceeds the internal growth rate because it allows…',['Selling new equity','Borrowing enough to keep the debt-to-equity ratio constant','Cutting dividends to zero','Ignoring retained earnings'],1,'Internal growth uses retained earnings only; sustainable growth adds proportional debt.'],
+  ['Which is the most important input in a percentage-of-sales forecast?',['The tax rate','The sales forecast','Depreciation','The payout ratio'],1,'If the sales forecast is off, nothing else is right.'],
+  ['A top-down sales forecast starts with…',['Each sales rep’s estimate','The economy, then the industry, then market share','Last year’s sales plus 5%','The income statement'],1,'Bottom up starts from products, regions and customers and adds up.']]};
+
+/* ---------- 3 TVM ---------- */
+PR.tvm={types:[
+ {n:'Future value',g(){const P=rr(1,40,1)*1000,r=rr(3,12,.5)/100,n=rr(5,30,1),F=P*Math.pow(1+r,n);return {q:`<p>You invest <strong>${D$(P)}</strong> today at <strong>${(r*100).toFixed(1)}%</strong> per year, compounded annually. What will it be worth in <strong>${n} years</strong>?</p>`,f:[{l:'Future value ($)',a:F,t:Math.max(1,F*.001)}],s:`<p>FV = PV(1 + r)<sup>t</sup> = ${D$(P)} × ${(1+r).toFixed(3)}<sup>${n}</sup> = <strong>${D$(F,2)}</strong><br>Calculator: N = ${n}, I/Y = ${(r*100).toFixed(1)}, PV = −${P}, PMT = 0, CPT FV.</p>`}}},
+ {n:'Present value',g(){const F=rr(5,100,1)*1000,r=rr(3,14,.5)/100,n=rr(3,30,1),P=F/Math.pow(1+r,n);return {q:`<p>A promise pays <strong>${D$(F)}</strong> in <strong>${n} years</strong>. Your opportunity rate is <strong>${(r*100).toFixed(1)}%</strong>. What is the most you should pay today?</p>`,f:[{l:'Present value ($)',a:P,t:Math.max(1,P*.001)}],s:`<p>PV = ${fr('FV','(1 + r)<sup>t</sup>')} = ${fr(D$(F),(1+r).toFixed(3)+'<sup>'+n+'</sup>')} = <strong>${D$(P,2)}</strong></p>`}}},
+ {n:'Loan payment',g(){const L=rr(150,700,5)*1000,apr=rr(3,8,.25)/100,y=pick([15,20,30]),i=apr/12,n=y*12,p=L*i/(1-Math.pow(1+i,-n));return {q:`<p>You borrow <strong>${D$(L)}</strong> at <strong>${(apr*100).toFixed(2)}% APR</strong> for <strong>${y} years</strong>, with monthly payments. What is the monthly payment?</p>`,f:[{l:'Monthly payment ($)',a:p,t:1}],s:`<p>Loan: PV = +${n0(L)}, N = ${n} months, periodic rate = ${(apr*100).toFixed(2)}% ÷ 12 = ${(i*100).toFixed(4)}%, FV = 0.<br>PMT = ${fr('PV × i','1 − (1 + i)<sup>−N</sup>')} = <strong>${D$(p,2)}</strong> (negative on a calculator: it leaves you).<br>Excel: <code>=PMT(${(apr*100).toFixed(2)}%/12, ${n}, ${L})</code></p>`}}},
+ {n:'Saving monthly',g(){const C=rr(2,15,1)*100,apr=rr(5,9,.5)/100,y=rr(10,35,1),i=apr/12,n=y*12,F=C*(Math.pow(1+i,n)-1)/i;return {q:`<p>You contribute <strong>${D$(C)}</strong> at the end of every month to an account earning <strong>${(apr*100).toFixed(1)}% APR</strong>, compounded monthly. How much will you have after <strong>${y} years</strong>?</p>`,f:[{l:'Future value ($)',a:F,t:Math.max(1,F*.001)}],s:`<p>Investment: PMT = −${C}, N = ${n}, i = ${(apr*100).toFixed(1)}% ÷ 12, PV = 0.<br>FV = PMT × ${fr('(1 + i)<sup>N</sup> − 1','i')} = <strong>${D$(F,2)}</strong><br>Excel: <code>=FV(${(apr*100).toFixed(1)}%/12, ${n}, -${C})</code></p>`}}},
+ {n:'Growing perpetuity',g(){const D0=rr(1,5,.05),g=rr(1,4,.25)/100,r=rr(6,12,.25)/100,P=D0*(1+g)/(r-g);return {q:`<p>A stock <strong>just paid</strong> a dividend of <strong>$${D0.toFixed(2)}</strong>, which grows <strong>${(g*100).toFixed(2)}%</strong> a year forever. Your discount rate is <strong>${(r*100).toFixed(2)}%</strong>. What is it worth?</p>`,f:[{l:'Next dividend D₁ ($)',a:D0*(1+g),t:.01},{l:'Value today ($)',a:P,t:Math.max(.05,P*.002)}],s:`<p>The formula needs the <em>next</em> cash flow: D₁ = ${D0.toFixed(2)} × ${(1+g).toFixed(4)} = <strong>$${(D0*(1+g)).toFixed(4)}</strong>.<br>PV = ${fr('D<sub>1</sub>','r − g')} = ${fr('$'+(D0*(1+g)).toFixed(4),(r*100).toFixed(2)+'% − '+(g*100).toFixed(2)+'%')} = <strong>$${P.toFixed(2)}</strong></p>`}}},
+ {n:'APR to EAR',g(){const apr=rr(4,24,.25)/100,m=pick([2,4,12,365]),E=Math.pow(1+apr/m,m)-1;const nm={2:'semiannually',4:'quarterly',12:'monthly',365:'daily'}[m];return {q:`<p>A lender quotes <strong>${(apr*100).toFixed(2)}% APR</strong>, compounded <strong>${nm}</strong>. What is the effective annual rate?</p>`,f:[{l:'EAR (%)',a:E*100,t:.01,u:'%'}],s:`<p>EAR = (1 + APR/m)<sup>m</sup> − 1 = (1 + ${(apr*100).toFixed(2)}%/${m})<sup>${m}</sup> − 1 = <strong>${(E*100).toFixed(3)}%</strong></p>`}}}],
+ quiz:[['You take out a loan. On a financial calculator, the loan amount (PV) should be entered as…',['Positive: the money comes to you','Negative: it is a debt','Either; signs do not matter','Zero'],0,'Loans: PV +, PMT −, FV −.'],
+  ['In Excel’s PMT, FV and PV functions, the Rate argument is the…',['Annual APR','Periodic rate (APR ÷ periods per year)','EAR','Rate in percent, e.g. 6 for 6%'],1,'Excel wants the periodic rate and the total number of periods.'],
+  ['A card charges 18% APR compounded daily. Its EAR is…',['Exactly 18%','Below 18%','Above 18%','Impossible to tell'],2,'Compounding more than once a year always pushes the EAR above the APR (about 19.7% here).'],
+  ['In the growing perpetuity formula PV₀ = CF₁/(r − g), CF₁ is…',['The cash flow just paid','The next cash flow, one period from now','The average cash flow','The cash flow at time T'],1,'If you are given D₀, grow it one period first: D₁ = D₀(1 + g).'],
+  ['Why should an investor be indifferent between $5,000 today and $12,968.71 in ten years at 10%?',['Because inflation is zero','Because $5,000 invested at 10% grows to exactly $12,968.71','Because both are risk-free','Because PV always equals FV'],1,'At the opportunity rate, the two amounts are the same value at different times.']]};
+
+/* ---------- 4 Bonds ---------- */
+const bondS=(c,yrs,y,F=1000)=>{const n=yrs*2,i=y/2,C=c*F/2;let p=0;for(let t=1;t<=n;t++)p+=C/Math.pow(1+i,t);return p+F/Math.pow(1+i,n)};
+PR.bonds={types:[
+ {n:'Price a bond',g(){const c=rr(2,9,.5)/100,yrs=rr(2,30,1),y=rr(1.5,10,.25)/100,P=bondS(c,yrs,y),cls=Math.abs(c-y)<1e-9?'Par':c>y?'Premium':'Discount';return {q:`<p>A bond has a $1,000 face value, a <strong>${(c*100).toFixed(1)}% coupon paid semiannually</strong>, and <strong>${yrs} years</strong> to maturity. Investors require a yield to maturity of <strong>${(y*100).toFixed(2)}%</strong>.</p>`,
+  f:[{l:'Price ($)',a:P,t:.5},{l:'It sells at a…',a:cls,o:['Premium','Par','Discount']}],s:`<p>Coupon per period = ${(c*100).toFixed(1)}% × 1,000 ÷ 2 = $${(c*500).toFixed(2)}; N = ${yrs*2}; rate per period = ${(y*50).toFixed(3)}%.<br>Price = Σ coupons/(1 + r)<sup>t</sup> + 1,000/(1 + r)<sup>N</sup> = <strong>${D$(P,2)}</strong><br>Calculator: N = ${yrs*2}, I/Y = ${(y*100).toFixed(2)}, P/Y = 2, PMT = ${(c*500).toFixed(2)}, FV = 1,000, CPT PV.<br>Coupon ${c>y?'>':c<y?'<':'='} YTM, so it sells at <strong>${cls.toLowerCase()}</strong>.</p>`}}},
+ {n:'Yield to maturity',g(){const c=rr(2,9,.5)/100,yrs=rr(3,25,1),yt=rr(2,10,.25)/100,P=Math.round(bondS(c,yrs,yt)*100)/100;let lo=0,hi=.5;for(let k=0;k<80;k++){const m=(lo+hi)/2;bondS(c,yrs,m)>P?lo=m:hi=m}const Y=(lo+hi)/2;return {q:`<p>A $1,000 bond with a <strong>${(c*100).toFixed(1)}% semiannual coupon</strong> and <strong>${yrs} years</strong> to maturity sells for <strong>${D$(P,2)}</strong>. What is its yield to maturity?</p>`,f:[{l:'YTM (%)',a:Y*100,t:.02,u:'%'}],s:`<p>Solve for the rate that makes the PV of the cash flows equal the price. Calculator: N = ${yrs*2}, PV = −${P.toFixed(2)}, PMT = ${(c*500).toFixed(2)}, FV = 1,000, P/Y = 2, CPT I/Y = <strong>${(Y*100).toFixed(2)}%</strong>.<br>Excel: <code>=RATE(${yrs*2}, ${(c*500).toFixed(2)}, -${P.toFixed(2)}, 1000)*2</code></p>`}}},
+ {n:'Duration',g(){const c=rr(0,10,1)/100,n=rr(2,5,1),y=rr(3,9,.5)/100;let rows='',P=0,W=0;const pv=[];for(let t=1;t<=n;t++){const cf=c*1000+(t===n?1000:0),v=cf/Math.pow(1+y,t);pv.push([t,cf,v]);P+=v}pv.forEach(([t,cf,v])=>{W+=t*v/P;rows+=`<tr><td>${t}</td><td>${D$(cf)}</td><td>${D$(v,2)}</td><td>${(v/P).toFixed(4)}</td><td>${(t*v/P).toFixed(4)}</td></tr>`});
+  return {q:`<p>A $1,000 bond pays a <strong>${(c*100).toFixed(0)}% annual coupon</strong> and matures in <strong>${n} years</strong>. Its yield to maturity is <strong>${(y*100).toFixed(1)}%</strong>. Compute its price and its duration.</p>`,f:[{l:'Price ($)',a:P,t:.5},{l:'Duration (years)',a:W,t:.01}],
+  s:`<div class="scroll"><table><thead><tr><th>Year</th><th>Cash flow</th><th>PV</th><th>Weight = PV ÷ price</th><th>Year × weight</th></tr></thead><tbody>${rows}<tr><td>Total</td><td></td><td>${D$(P,2)}</td><td>1.0000</td><td><strong>${W.toFixed(3)}</strong></td></tr></tbody></table></div><p style="margin-top:8px">Duration = sum of year × weight = <strong>${W.toFixed(3)} years</strong>.${c===0?' A zero-coupon bond’s duration equals its maturity.':''}</p>`}}}],
+ quiz:[['Credit ratings from Moody’s and S&P measure…',['All the risks of a bond','Default risk only','Interest-rate risk','Inflation risk'],1,'A AAA bond can still lose value when rates or inflation rise.'],
+  ['Market yields rise. What happens to the price of an existing fixed-coupon bond?',['It rises','It falls','It stays at par','It depends on the rating'],1,'The teeter-totter: a fixed coupon must be bought more cheaply to deliver a higher yield.'],
+  ['Which bond has the most interest-rate risk?',['5-year, 8% coupon','20-year, 2% coupon','5-year zero-coupon','1-year, 5% coupon'],1,'Longer maturity and lower coupons both lengthen duration.'],
+  ['A bond’s coupon rate is 5% and its YTM is 6.5%. It sells at…',['A premium','Par','A discount','Face value plus accrued interest'],2,'YTM above the coupon means price below par.'],
+  ['The 2008 crisis showed that “all bonds are the same” is a myth because…',['Treasury yields went to zero','AAA-rated mortgage securities defaulted while Treasuries held up','All bond prices fell together','Ratings were too conservative'],1,'Default risk is bond-specific; inflation shocks like the late 1970s hit broadly.']]};
+
+/* ---------- 5 Stocks ---------- */
+PR.stocks={types:[
+ {n:'Constant growth',g(){const D0=rr(.5,4,.05),g=rr(1,5,.25)/100,r=rr(7,13,.25)/100,P=D0*(1+g)/(r-g);return {q:`<p>A company just paid a dividend of <strong>$${D0.toFixed(2)}</strong>. Dividends are expected to grow <strong>${(g*100).toFixed(2)}%</strong> a year indefinitely, and the required return is <strong>${(r*100).toFixed(2)}%</strong>.</p>`,f:[{l:'Value per share ($)',a:P,t:Math.max(.05,P*.003)}],s:`<p>P₀ = ${fr('D<sub>0</sub>(1 + g)','r − g')} = ${fr(D0.toFixed(2)+' × '+(1+g).toFixed(4),(r*100).toFixed(2)+'% − '+(g*100).toFixed(2)+'%')} = <strong>$${P.toFixed(2)}</strong></p>`}}},
+ {n:'Two-stage',g(){const D0=rr(1,3,.05),g1=rr(10,25,1)/100,g2=rr(2,4,.5)/100,r=rr(9,13,.5)/100,N=3;const D=[1,2,3].map(t=>D0*Math.pow(1+g1,t)),TV=D[2]*(1+g2)/(r-g2),pv=D.map((d,i)=>d/Math.pow(1+r,i+1)),pT=TV/Math.pow(1+r,3),P=pv.reduce((a,b)=>a+b,0)+pT;
+  return {q:`<p>A firm just paid <strong>$${D0.toFixed(2)}</strong>. Dividends will grow <strong>${(g1*100).toFixed(0)}%</strong> a year for 3 years, then <strong>${(g2*100).toFixed(1)}%</strong> forever. Required return: <strong>${(r*100).toFixed(1)}%</strong>.</p>`,f:[{l:'Terminal value at year 3 ($)',a:TV,t:Math.max(.05,TV*.003)},{l:'Value today ($)',a:P,t:Math.max(.05,P*.003)}],
+  s:`<div class="scroll"><table><thead><tr><th>Year</th><th>Dividend</th><th>PV</th></tr></thead><tbody>${D.map((d,i)=>`<tr><td>${i+1}</td><td>$${d.toFixed(4)}</td><td>$${pv[i].toFixed(4)}</td></tr>`).join('')}<tr><td>TV at 3</td><td>$${TV.toFixed(2)}</td><td>$${pT.toFixed(2)}</td></tr></tbody></table></div><p style="margin-top:8px">TV₃ = ${fr('D<sub>3</sub>(1 + g<sub>2</sub>)','r − g<sub>2</sub>')} = ${fr('$'+D[2].toFixed(4)+' × '+(1+g2).toFixed(3),(r*100).toFixed(1)+'% − '+(g2*100).toFixed(1)+'%')} = <strong>$${TV.toFixed(2)}</strong><br>Price = sum of PVs = <strong>$${P.toFixed(2)}</strong> (${Math.round(pT/P*100)}% from the terminal value).</p>`}}},
+ {n:'Comparables',g(){const C=['North','South','East','West'].map(n=>[n,rr(11,26,.1)]),avg=C.reduce((a,c)=>a+c[1],0)/4,eps=rr(.8,4.5,.05);return {q:`<p>Value a private firm with earnings per share of <strong>$${eps.toFixed(2)}</strong> using these public comparables’ P/E ratios:</p>`+dt([C.flatMap(([n,v])=>[n+' Co.',v.toFixed(1)+'×'])]),
+  f:[{l:'Average P/E',a:avg,t:.02},{l:'Value per share ($)',a:avg*eps,t:Math.max(.05,avg*eps*.003)}],s:`<p>Average P/E = (${C.map(c=>c[1].toFixed(1)).join(' + ')}) ÷ 4 = <strong>${avg.toFixed(2)}×</strong><br>Value = ${avg.toFixed(2)} × $${eps.toFixed(2)} = <strong>$${(avg*eps).toFixed(2)}</strong></p>`}}},
+ {n:'DCF per share',g(){const F=[rr(40,120,1)],g=rr(2,3.5,.5)/100,w=rr(8,11,.5)/100;F.push(Math.round(F[0]*rr(1.05,1.2,.01)));F.push(Math.round(F[1]*rr(1.03,1.15,.01)));const debt=rr(200,1200,10),sh=rr(20,120,1);const pv=F.map((f,i)=>f/Math.pow(1+w,i+1)),TV=F[2]*(1+g)/(w-g),pT=TV/Math.pow(1+w,3),V=pv.reduce((a,b)=>a+b,0)+pT,E=V-debt;
+  return {q:`<p>Forecast free cash flows to the firm are <strong>$${F[0]}M, $${F[1]}M and $${F[2]}M</strong> in years 1–3, growing <strong>${(g*100).toFixed(1)}%</strong> a year after that. WACC is <strong>${(w*100).toFixed(1)}%</strong>. The firm has <strong>$${debt}M</strong> of debt (market value) and <strong>${sh}M shares</strong>.</p>`,
+  f:[{l:'Firm value ($M)',a:V,t:Math.max(1,V*.003)},{l:'Equity value ($M)',a:E,t:Math.max(1,V*.003)},{l:'Value per share ($)',a:E/sh,t:Math.max(.05,Math.abs(E/sh)*.004)}],
+  s:`<p>PV of FCF 1–3 = ${pv.map(v=>v.toFixed(2)).join(' + ')} = ${pv.reduce((a,b)=>a+b,0).toFixed(2)}<br>TV₃ = ${F[2]} × ${(1+g).toFixed(3)} ÷ (${(w*100).toFixed(1)}% − ${(g*100).toFixed(1)}%) = ${TV.toFixed(1)}; PV = ${pT.toFixed(1)}<br>Firm value = <strong>$${V.toFixed(1)}M</strong>; equity = firm − debt = <strong>$${E.toFixed(1)}M</strong>; per share = <strong>$${(E/sh).toFixed(2)}</strong></p>`}}}],
+ quiz:[['A dividend discount model makes the most sense for…',['A fast-growing tech firm that pays no dividend','A utility with steady, reliable dividends','A firm with negative earnings','A start-up'],1,'DDMs need dividends that reflect the firm’s cash generation.'],
+  ['The method of comparables is especially useful for…',['Firms with no competitors','Private firms with public comparables','Firms with negative earnings','Bonds'],1,'No forecasting required; the market supplies the multiple.'],
+  ['In the DCF model, why subtract the market value of debt?',['Debt is a sunk cost','FCFF values the whole firm; shareholders own what is left after creditors','To account for taxes','Because interest was excluded'],1,'Discounting FCFF at WACC gives firm value; equity = firm value − debt.'],
+  ['A good anchor for the steady-state growth rate g is…',['The firm’s recent growth','Long-run GDP growth','The discount rate','Zero, always'],1,'Abnormal growth attracts competition (or exit), so long-run growth reverts toward the economy’s average.'],
+  ['Valuations from five models overlap between $29 and $30. The market price is $22. This suggests…',['The models are wrong','A possible mispricing worth investigating','The stock is overvalued','Nothing'],1,'Buy low, sell high requires occasional mispricing and a realistic expectation of convergence.']]};
+
+/* ---------- 7 Relevant cash flows ---------- */
+PR['relevant-cash-flows']={types:[
+ {n:'Project NPV',g(){const I=rr(5,20,1)*100000,n=pick([3,4,5]),Rv=rr(4,12,1)*100000,Cs=Math.round(Rv*rr(.4,.65,.05)),T_=pick([.21,.25,.3]),W=rr(2,10,1)*10000,S=Math.round(I*rr(.05,.25,.05)),r=rr(8,14,1)/100,Dp=I/n,OCF=(Rv-Cs-Dp)*(1-T_)+Dp,ATS=S*(1-T_),c0=-I-W,cN=OCF+W+ATS;let N=c0;for(let t=1;t<=n;t++)N+=(t===n?cN:OCF)/Math.pow(1+r,t);
+  return {q:`<p>New equipment costs <strong>${D$(I)}</strong>, depreciated straight-line to zero over its <strong>${n}-year</strong> life. It adds <strong>${D$(Rv)}</strong> of revenue and <strong>${D$(Cs)}</strong> of costs a year. The project needs <strong>${D$(W)}</strong> of net working capital at the start, recovered at the end. The equipment sells for <strong>${D$(S)}</strong> at the end. Tax rate ${(T_*100).toFixed(0)}%, discount rate ${(r*100).toFixed(0)}%.</p>`,
+  f:[{l:'Annual operating CF ($)',a:OCF,t:2},{l:'After-tax salvage ($)',a:ATS,t:2},{l:'Year 0 cash flow ($)',a:c0,t:2},{l:`Year ${n} cash flow ($)`,a:cN,t:2},{l:'NPV ($)',a:N,t:Math.max(5,Math.abs(N)*.004)}],
+  s:`<p>Depreciation = ${D$(I)} ÷ ${n} = ${D$(Dp)}<br>OCF = (Revenue − Costs − Dep)(1 − T) + Dep = (${n0(Rv)} − ${n0(Cs)} − ${n0(Dp)}) × ${1-T_} + ${n0(Dp)} = <strong>${D$(OCF)}</strong><br>Book value at the end is 0, so the whole sale price is a taxable gain: after-tax salvage = ${n0(S)} × ${1-T_} = <strong>${D$(ATS)}</strong><br>Year 0 = −equipment − NWC = <strong>${D$(c0)}</strong><br>Year ${n} = OCF + NWC recovered + after-tax salvage = <strong>${D$(cN)}</strong><br>NPV at ${(r*100).toFixed(0)}% = <strong>${D$(N)}</strong>. Interest on any financing is not in these cash flows; it is in the discount rate.</p>`}}},
+ {n:'After-tax salvage',g(){const C=rr(1,6,.25)*1e6,AD=Math.round(C*rr(.3,.95,.05)/1e4)*1e4,S=Math.round(C*rr(.05,.7,.05)/1e4)*1e4,T_=pick([.21,.25,.3,.35]),BV=C-AD,tax=(S-BV)*T_;
+  return {q:`<p>Equipment bought for <strong>${D$(C)}</strong> has <strong>${D$(AD)}</strong> of accumulated depreciation. It is sold for <strong>${D$(S)}</strong>. Tax rate: <strong>${(T_*100).toFixed(0)}%</strong>.</p>`,f:[{l:'Book value ($)',a:BV,t:1},{l:'Tax on sale ($, negative if a saving)',a:tax,t:2},{l:'After-tax salvage ($)',a:S-tax,t:2}],
+  s:`<p>Book value = ${n0(C)} − ${n0(AD)} = <strong>${D$(BV)}</strong><br>${S>=BV?'Gain':'Loss'} = ${n0(S)} − ${n0(BV)} = ${D$(S-BV)}; tax = ${D$(S-BV)} × ${T_} = <strong>${D$(tax)}</strong>${tax<0?' (a tax saving)':''}<br>After-tax salvage = ${n0(S)} − (${D$(tax)}) = <strong>${D$(S-tax)}</strong></p>`}}}],
+ quiz:[['You spent $150,000 on a feasibility study last year. In the project analysis, it is…',['Included at time 0','Excluded: it is sunk','Included, spread over the life','Included as an opportunity cost'],1,'It is spent whether or not you accept the project.'],
+  ['The project will use a building you could otherwise rent out for $80,000 a year. That rent is…',['Irrelevant: you own the building','An opportunity cost to include','A sunk cost','A financing cost'],1,'Accepting the project gives up that income.'],
+  ['You finance the equipment with a loan. The interest payments are…',['Subtracted from the cash flows each year','Excluded from the cash flows; financing is reflected in the discount rate','Added to the initial outlay','Ignored entirely, including in the discount rate'],1,'Include the full outlay at time 0. If you get “fancy” with loan payments, discount them at the loan rate.'],
+  ['Inventory of $50,000 is built at launch and sold off at the end. In the cash flows…',['Include −$50,000 at the start and +$50,000 at the end','Ignore it: it is not an expense','Include only the outflow','Depreciate it'],0,'Net working capital is an investment that is recovered when the project ends.'],
+  ['When you are given GAAP EBIT and taxes, which depreciation do you add back?',['MACRS','GAAP depreciation','None','Whichever is larger'],1,'Depreciation matters only through taxes. If you must estimate EBIT and taxes yourself, use MACRS throughout.']]};
+
+/* ---------- 8 Risk ---------- */
+PR['risk-analysis']={types:[
+ {n:'68-95-99.7',g(){const mu=rr(20,200,5),sd=rr(2,30,1),k=pick([1,2,3]),P={1:68,2:95,3:99.7}[k];return {q:`<p>A forecast NPV is normally distributed with a mean of <strong>$${mu}K</strong> and a standard deviation of <strong>$${sd}K</strong>.</p><p>Between which two values does about <strong>${P}%</strong> of the distribution fall? And what share of outcomes lies <em>above</em> the upper value?</p>`,
+  f:[{l:'Lower bound ($K)',a:mu-k*sd,t:.5},{l:'Upper bound ($K)',a:mu+k*sd,t:.5},{l:'Share above upper (%)',a:(100-P)/2,t:.06,u:'%'}],s:`<p>${P}% lies within ${k} standard deviation${k>1?'s':''} of the mean: ${mu} ± ${k} × ${sd} = <strong>${mu-k*sd} to ${mu+k*sd}</strong>.<br>The remaining ${(100-P).toFixed(1)}% is split evenly between the two tails, so <strong>${((100-P)/2).toFixed(2)}%</strong> lies above.</p>`}}},
+ {n:'Scenario NPV',g(){const I=rr(8,15,1)*1000,s=rr(12,20,1)*100,n=15,r=.06,sv=2000,sc=[['Worst',.8,1.2],['Base',1,1],['Best',1.2,.85]],npv=(cf,cost)=>-cost+cf*(1-Math.pow(1+r,-n))/r+sv/Math.pow(1+r,n);const v=sc.map(([,a,b])=>npv(s*a,I*b));
+  return {q:`<p>Solar panels cost <strong>${D$(I)}</strong> and save <strong>${D$(s)}</strong> a year for 15 years, with a $2,000 resale value at the end. Discount rate 6%.</p><p>Worst case: savings 20% lower and cost 20% higher. Best case: savings 20% higher and cost 15% lower. Compute NPV in each scenario.</p>`,
+  f:sc.map(([n_],i)=>({l:n_+' case NPV ($)',a:v[i],t:Math.max(3,Math.abs(v[i])*.004)})),s:`<p>Annuity factor (15 years, 6%) = 9.7122; PV of resale = 2,000 ÷ 1.06<sup>15</sup> = 834.55.<br>${sc.map(([n_,a,b],i)=>`${n_}: −${n0(I*b)} + ${n0(s*a)} × 9.7122 + 834.55 = <strong>${D$(v[i])}</strong>`).join('<br>')}<br>${v[0]<0?'The worst case destroys value: worth knowing before you commit.':'Even the worst case is positive.'}</p>`}}}],
+ quiz:[['“Never make a decision based on a singular output derived from static inputs” is a warning against…',['Using NPV','Relying on one point estimate when inputs are forecasts','Using Excel','Simulation'],1,'Inputs involve forecasting, and forecasting error is inevitable.'],
+  ['Changing one input at a time and recording the effect on NPV is…',['Scenario analysis','Sensitivity analysis','Simulation','Regression'],1,'Scenario analysis changes many inputs together into a coherent state of the world.'],
+  ['Why is simulation called “sensitivity analysis on steroids”?',['It uses more decimal places','Every key input varies at once over thousands of trials, not just two at a time','It ignores probability','It always gives a higher NPV'],1,'Excel data tables handle at most two inputs at a time and are coarse.'],
+  ['A normal distribution is fully described by…',['Its mean only','Its mean and standard deviation','Skewness and kurtosis','Its median'],1,'Skewness is 0 and kurtosis is 3 for every normal distribution.'],
+  ['A simulated NPV histogram shows 12% of outcomes below zero. This tells you…',['The project will lose money','There is roughly a 12% chance the project destroys value, given your input distributions','NPV is 12% too high','Nothing useful'],1,'That probability is only as good as the distributions you assumed.']]};
+
+/* ---------- 9 WACC ---------- */
+PR.wacc={types:[
+ {n:'CAPM',g(){const rf=rr(2,5,.25)/100,b=rr(.5,2,.05),m=rr(4,7,.25)/100,R=rf+b*m;return {q:`<p>Risk-free rate <strong>${(rf*100).toFixed(2)}%</strong>, equity risk premium <strong>${(m*100).toFixed(2)}%</strong>, beta <strong>${b.toFixed(2)}</strong>. What is the cost of equity?</p>`,f:[{l:'Cost of equity (%)',a:R*100,t:.02,u:'%'}],s:`<p>R<sub>E</sub> = R<sub>F</sub> + β × ERP = ${(rf*100).toFixed(2)}% + ${b.toFixed(2)} × ${(m*100).toFixed(2)}% = <strong>${(R*100).toFixed(3)}%</strong></p>`}}},
+ {n:'Unlever and relever',g(){const bE=rr(.7,1.6,.01),D=rr(.5,5,.1),E=rr(3,15,.1),dv=rr(.1,.5,.05),rf=rr(3,6,.5)/100,m=rr(5,7,.1)/100,ev=E/(D+E),bA=bE*ev,bP=bA/(1-dv),R=rf+bP*m;return {q:`<p>A pure-play comparable has an equity beta of <strong>${bE.toFixed(2)}</strong>, <strong>$${D.toFixed(1)}B</strong> of debt and <strong>$${E.toFixed(1)}B</strong> of equity (market values). Your project will be financed with <strong>D/V = ${(dv*100).toFixed(0)}%</strong>. Assume debt betas are zero, R<sub>F</sub> = ${(rf*100).toFixed(1)}% and the market risk premium is ${(m*100).toFixed(1)}%.</p>`,
+  f:[{l:'Comparable’s asset beta',a:bA,t:.01},{l:'Project equity beta',a:bP,t:.015},{l:'Project cost of equity (%)',a:R*100,t:.06,u:'%'}],s:`<p>E/V for the comp = ${E.toFixed(1)} ÷ ${(D+E).toFixed(1)} = ${ev.toFixed(4)}<br>β<sub>A</sub> = β<sub>E</sub> × E/V = ${bE.toFixed(2)} × ${ev.toFixed(4)} = <strong>${bA.toFixed(3)}</strong><br>Relever: β<sub>E</sub> = β<sub>A</sub> × V/E = ${bA.toFixed(3)} ÷ ${(1-dv).toFixed(2)} = <strong>${bP.toFixed(3)}</strong><br>R<sub>E</sub> = ${(rf*100).toFixed(1)}% + ${bP.toFixed(3)} × ${(m*100).toFixed(1)}% = <strong>${(R*100).toFixed(2)}%</strong></p>`}}},
+ {n:'Debt and preferred',g(){const y=rr(3,9,.05)/100,T_=pick([.21,.25,.3,.35]),Dv=rr(1,6,.05),P=rr(20,100,.5);return {q:`<p>The firm’s long-term bonds yield <strong>${(y*100).toFixed(2)}%</strong> to maturity and its marginal tax rate is <strong>${(T_*100).toFixed(0)}%</strong>. Its preferred stock pays a fixed <strong>$${Dv.toFixed(2)}</strong> annual dividend and trades at <strong>$${P.toFixed(2)}</strong>.</p>`,
+  f:[{l:'After-tax cost of debt (%)',a:y*(1-T_)*100,t:.02,u:'%'},{l:'Cost of preferred (%)',a:Dv/P*100,t:.02,u:'%'}],s:`<p>After-tax R<sub>D</sub> = YTM × (1 − T) = ${(y*100).toFixed(2)}% × ${1-T_} = <strong>${(y*(1-T_)*100).toFixed(3)}%</strong> (interest is tax-deductible).<br>R<sub>P</sub> = D ÷ P₀ = ${Dv.toFixed(2)} ÷ ${P.toFixed(2)} = <strong>${(Dv/P*100).toFixed(3)}%</strong> (dividends are not deductible).</p>`}}},
+ {n:'Full WACC',g(){const E=rr(2,20,.5),D=rr(.5,10,.5),Pv=pick([0,0,rr(.2,2,.1)]),RE=rr(8,15,.25)/100,RD=rr(3,8,.25)/100,RP=rr(5,9,.25)/100,T_=pick([.21,.25,.3]),V=E+D+Pv,W=E/V*RE+D/V*RD*(1-T_)+Pv/V*RP;
+  return {q:`<p>Market values: equity <strong>$${E.toFixed(1)}B</strong>, debt <strong>$${D.toFixed(1)}B</strong>${Pv?`, preferred <strong>$${Pv.toFixed(1)}B</strong>`:''}. Costs: equity <strong>${(RE*100).toFixed(2)}%</strong>, debt (pre-tax YTM) <strong>${(RD*100).toFixed(2)}%</strong>${Pv?`, preferred <strong>${(RP*100).toFixed(2)}%</strong>`:''}. Tax rate ${(T_*100).toFixed(0)}%.</p>`,
+  f:[{l:'Weight of equity, E/V (%)',a:E/V*100,t:.05,u:'%'},{l:'WACC (%)',a:W*100,t:.02,u:'%'}],s:`<p>V = ${E.toFixed(1)} + ${D.toFixed(1)}${Pv?' + '+Pv.toFixed(1):''} = ${V.toFixed(1)}; E/V = <strong>${(E/V*100).toFixed(2)}%</strong>, D/V = ${(D/V*100).toFixed(2)}%${Pv?`, P/V = ${(Pv/V*100).toFixed(2)}%`:''}<br>WACC = ${(E/V).toFixed(4)} × ${(RE*100).toFixed(2)}% + ${(D/V).toFixed(4)} × ${(RD*100).toFixed(2)}% × ${1-T_}${Pv?` + ${(Pv/V).toFixed(4)} × ${(RP*100).toFixed(2)}%`:''} = <strong>${(W*100).toFixed(3)}%</strong></p>`}}}],
+ quiz:[['Why is only systematic risk rewarded with a higher expected return?',['It is easier to measure','Investors can diversify away company-specific risk for free','Regulators require it','Systematic risk is always larger'],1,'No one pays you to bear a risk you could eliminate at no cost.'],
+  ['The beta of the market portfolio is…',['0','1','Equal to the equity risk premium','Different every year'],1,'Beta is scaled so that average systematic risk is exactly 1.'],
+  ['WACC weights should be based on…',['Book values','Market values','Equal weights','Whatever the CFO prefers'],1,'Investors’ required returns apply to what their claims are worth today.'],
+  ['Why does debt enter WACC as R_D(1 − T)?',['Banks offer a discount','Interest is tax-deductible, lowering its true cost','Dividends are deductible','Debt is riskless'],1,'$100,000 of 10% debt at a 35% tax rate costs $6,500 after tax: 6.5%.'],
+  ['A firm is evaluating a project unlike its existing business. Its beta should come from…',['The firm’s own beta','Pure-play comparables in the project’s line of business, unlevered and relevered','The market beta of 1','The risk-free rate'],1,'Use comps’ asset betas, then relever at the project’s capital structure.']]};
+
+const WORTH={fcff:'You can’t judge whether something is worth it until you know which cash it actually puts in its owners’ pockets.',
+ forecasting:'Worth it depends on the future, so we forecast the statements that will produce the cash.',
+ tvm:'A dollar later is not a dollar now. Whether something is worth it has to be judged in today’s dollars.',
+ bonds:'Is this bond worth its price? Compare the present value of its coupons and principal with what the market asks.',
+ stocks:'Is this stock worth its price? Estimate intrinsic value several ways and see where the market price falls.',
+ 'relevant-cash-flows':'Only cash that exists because of the decision counts toward whether it is worth it.',
+ 'risk-analysis':'Worth it under one forecast is not enough. How often is it worth it across all the futures that could happen?',
+ wacc:'Worth it compared with what? The cost of capital is the return investors could earn elsewhere at the same risk.'};
+/* ---------- nav and router ---------- */
+$('#nav').innerHTML=`<a href="#home" data-p="home">Home</a>`+L.map(l=>`<a href="#${l.id}" data-p="${l.id}"><b>${l.n}</b>${l.t}</a>`).join('');
+$('#stubs').innerHTML=L.filter(l=>!l.full).map(l=>`<section class="page" id="p-${l.id}">
+ <div class="band"><div class="kicker"><b>Lecture ${l.n}</b> · ${l.app?'Applying the equation':'Answers: '+l.q.map(k=>Q[k].q).join(' · ')}</div>
+ <h1>${l.t}</h1>
+ <div class="note" style="max-width:760px"><strong>Is it worth it?</strong> ${WORTH[l.id]}</div>
+ <div class="youare"><span>You are here</span><span class="eq" data-eq="${l.q.join(',')}"></span><span class="tree"><span class="chip on">${l.br}</span></span></div>
+ <p class="lede">${l.big}</p></div>
+ <div class="band alt"><div class="grid g2"><div><h2>Key ideas</h2><ul>${l.con.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+ <div><h2>Key equations</h2>${l.f.map(f=>`<div class="card" style="margin-bottom:10px"><span class="eq" style="font-size:20px">${f}</span></div>`).join('')}</div></div>${LEARN[l.id]?`<p style="margin-top:18px">Need more than a summary? <button class="sm" data-jump="learn-${l.id}">Go to the walkthroughs ↓</button></p>`:''}</div>
+ ${LEARN[l.id]?`<div class="band" id="learn-${l.id}">${LEARN[l.id].map(m=>m.html).join('')}</div>`:''}
+ ${PR[l.id]?practiceHTML(l.id):''}</section>`).join('');
+$$('[data-eq]').forEach(e=>{const v=e.dataset.eq;e.innerHTML=eqHTML(v==='all'?'all':v.split(','))});
+
+function route(){
+  const id=(location.hash||'#home').slice(1);
+  const pg=$('#p-'+id)?id:'home';
+  $$('.page').forEach(p=>p.classList.toggle('on',p.id==='p-'+pg));
+  $$('#nav a').forEach(a=>{const on=a.dataset.p===pg;a.classList.toggle('on',on);if(on)a.scrollIntoView({block:'nearest',inline:'center'})});
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+
+/* ---------- home: hero equation + question cards ---------- */
+$('#heroEq').innerHTML=eqHTML([],1);
+$('#qcards').innerHTML=Object.entries(Q).map(([k,v])=>`<div class="card qcard" data-k="${k}" tabindex="0"><div class="tag">${v.tag}</div><h3>${v.q}</h3><p style="font-size:15px;color:var(--mute)">${v.d}</p><ul>${k==='v'?`<li><a data-jump="lecture-0" role="button" tabindex="0" style="cursor:pointer"><span class="num">0</span>The basics of asset valuation ↓</a></li><li><a data-jump="arrows-0" role="button" tabindex="0" style="cursor:pointer"><span class="num">0</span>Why future cash is worth less ↓</a></li>`:''}${L.filter(l=>l.q.includes(k)&&!l.full).map(l=>`<li><a href="#${l.id}"><span class="num">${l.n}</span>${l.t}</a></li>`).join('')}</ul></div>`).join('');
+const hlHero=k=>$$('#heroEq .pc').forEach(p=>p.classList.toggle('hl',p.dataset.k===k));
+$$('.qcard').forEach(c=>{c.addEventListener('mouseenter',()=>hlHero(c.dataset.k));c.addEventListener('focusin',()=>hlHero(c.dataset.k));c.addEventListener('mouseleave',()=>hlHero(null))});
+$$('#heroEq .pc').forEach(p=>{p.style.cursor='pointer';p.addEventListener('mouseenter',()=>hlHero(p.dataset.k));p.addEventListener('click',()=>$(`.qcard[data-k="${p.dataset.k}"]`).focus())});
+const apps=[['bonds','Is this bond worth its price?','Coupons and principal, discounted at the yield to maturity.'],['stocks','Is this stock worth its price?','Comparables, dividends and free cash flows, triangulated.'],['capital-budgeting','Is this project worth the investment?','NPV, IRR and friends for go/no-go decisions.']];
+$('#appcards').innerHTML=apps.map(([id,t,d])=>{const l=L.find(x=>x.id===id);return `<a class="card" href="#${id}" style="text-decoration:none;color:inherit;border-top:4px solid var(--ink)"><div class="kicker">Lecture ${l.n}</div><h3>${t}</h3><p style="font-size:15px">${d}</p><span class="eq" style="font-size:22px">${eqHTML("all")}</span></a>`}).join('');
+
+/* ---------- virtuous cycle ---------- */
+{const N=[[300,38,'Financiers provide','capital'],[505,120,'Firm procures','assets'],[505,262,'Assets produce','goods and services'],[300,342,'Goods and services','generate revenue'],[95,262,'Revenue becomes','net income'],[95,120,'Excess distributed','to financiers']];
+ const W=170,H=50;let s='';
+ const edge=(a,b)=>{const [x1,y1]=a,[x2,y2]=b,dx=x2-x1,dy=y2-y1;const k=Math.min(Math.abs((W/2+6)/(dx||1e-9)),Math.abs((H/2+6)/(dy||1e-9)));return [x1+dx*k,y1+dy*k,x2-dx*k,y2-dy*k]};
+ N.forEach((n,i)=>{const m=N[(i+1)%6];const [a,b,c,d]=edge(n,m);s+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="currentColor" stroke-width="1.5" marker-end="url(#ah)"/>`});
+ const [a,b,c,d]=edge(N[4],N[1]);s+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="var(--red)" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ah)" style="color:var(--red)"/><text x="318" y="222" text-anchor="middle" style="fill:var(--red);font-weight:600">Plowback</text>`;
+ N.forEach((n,i)=>{const hot=i===5;s+=`<rect x="${n[0]-W/2}" y="${n[1]-H/2}" width="${W}" height="${H}" fill="${hot?'var(--red)':'var(--panel)'}" /><text x="${n[0]}" y="${n[1]-4}" text-anchor="middle" style="fill:${hot?'#fff':'var(--ink)'};font-size:13px">${n[2]}</text><text x="${n[0]}" y="${n[1]+13}" text-anchor="middle" style="fill:${hot?'#fff':'var(--ink)'};font-size:13px">${n[3]}</text>`});
+ $('#vc').innerHTML=s;}
+
+/* ---------- reservation-price chain ---------- */
+{const S=[['Reservation price','The primary driver of any asset’s value is what buyers are willing to pay. Reservation prices form the demand curve, and demand sets the market price. A Ski-Doo 850 sells for about $14K because enough people would pay at least that.'],
+ ['F(expected utility)','What sets a reservation price? How much you expect to enjoy the thing. For consumption assets (a car, jeans, skis, a Big Mac) utility depends heavily on personal taste.'],
+ ['F(future cash flows)','Financial assets (a share of stock, a bond, a stake in a company) offer only one kind of utility: future cash flows. That makes them something we can value systematically.'],
+ [`Σ ${fr('CF<sub>t</sub>','(1 + r)<sup>t</sup>')}`,'Value is the sum of the present values of expected future cash flows. If that value exceeds the price, it is worth it. Using the equation takes four answers: what cash flows, how to forecast them, when is T, and what is the right r? The rest of the course supplies them.']];
+ let i=0;const draw=()=>{$('#chain').innerHTML=`<div class="steps"><div class="st first">${S[i][0]}</div><div class="ar">→</div><div class="st">Demand curve</div><div class="ar">→</div><div class="st">Market price</div></div><p style="min-height:5em">${S[i][1]}</p>`;
+  $('#chDots').innerHTML=S.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('');$('#chPrev').disabled=i===0;$('#chNext').textContent=i===S.length-1?'Start over':'Next'};
+ $('#chNext').onclick=()=>{i=(i+1)%S.length;draw()};$('#chPrev').onclick=()=>{if(i>0){i--;draw()}};draw();}
+
+/* ---------- picture helpers ---------- */
+function live(svg,fn){svg._draw=()=>{const W=svg.clientWidth,H=svg.clientHeight;if(W)svg.innerHTML=fn(W,H)};if(!svg._ro){svg._ro=new ResizeObserver(()=>svg._draw());svg._ro.observe(svg)}svg._draw()}
+const AH=`<defs><marker id="pa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="context-stroke"/></marker></defs>`;
+const T=(x,y,t,o='')=>`<text x="${x}" y="${y}" ${o}>${t}</text>`;
+
+/* ---------- flaming arrows (home) ---------- */
+{const shaft='#7a4a22',head='#4a4f55';
+ const F=x=>`M${x} 0 C${x-10} -18 ${x-40} -30 ${x-70} -26 C${x-60} -18 ${x-82} -14 ${x-112} -36 C${x-96} -14 ${x-122} -6 ${x-160} -14 C${x-128} 4 ${x-96} 16 ${x-64} 24 C${x-40} 24 ${x-12} 16 ${x} 0 Z`;
+ const fl=(x,k,col,cls)=>`<path class="${cls}" d="${F(x)}" fill="${col}" transform="translate(${x} 0) scale(${k}) translate(${-x} 0)"/>`;
+ const arrow=([x1,y1],[x2,y2],label,i)=>{const L=Math.hypot(x2-x1,y2-y1),deg=Math.atan2(y2-y1,x2-x1)*180/Math.PI,h=L-6;
+  return `<g transform="translate(${x1} ${y1}) rotate(${deg})">
+   <g class="fx f${i}">${fl(h-12,1,'#d8170c','fl1')}${fl(h-14,.78,'#f26b1d','fl2')}${fl(h-16,.55,'#ffb627','fl3')}${fl(h-18,.3,'#fff3b0','fl4')}</g>
+   <line x1="34" y1="0" x2="${h-20}" y2="0" stroke="${shaft}" stroke-width="5" stroke-linecap="round"/>
+   <polygon points="${h-26},-11 ${h},0 ${h-26},11 ${h-20},0" fill="${head}"/>
+   <polygon points="0,-12 30,-3 30,3 0,12 10,0" fill="var(--red)"/><polygon points="6,-6 30,-1 30,1 6,6 13,0" fill="#fff" opacity=".7"/></g>`};
+ const A=[[[30,40],[508,128],'Inflation'],[[20,190],[486,186],'Opportunity cost'],[[50,330],[506,300],'Uncertainty']];
+ let g=`<defs><radialGradient id="gold" cx=".35" cy=".35"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#c9930a"/></radialGradient><marker id="pa2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="var(--slate)"/></marker></defs>`;
+ [[560,305],[512,322],[606,324],[560,262]].forEach(([x,y])=>g+=`<ellipse cx="${x}" cy="${y+14}" rx="46" ry="12" fill="#a87b00"/><ellipse cx="${x}" cy="${y}" rx="46" ry="14" fill="url(#gold)" stroke="#a87b00"/>`);
+ g+=`<circle cx="560" cy="175" r="68" fill="url(#gold)" stroke="#a87b00" stroke-width="3"/><circle cx="560" cy="175" r="55" fill="none" stroke="#a87b00" stroke-width="1.5" opacity=".6"/><text x="560" y="189" text-anchor="middle" style="font-family:'Source Serif 4',serif;font-size:42px;fill:#5a3d00;font-weight:600">CF<tspan dy="8" font-size="25">t</tspan></text>`;
+ g+=`<text x="560" y="385" text-anchor="middle" style="font-size:20px;fill:var(--ink);font-weight:600">Future cash flows</text>`;
+ g+=`<path d="M640 150 C 700 110, 770 110, 812 150" fill="none" stroke="var(--slate)" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#pa2)"/><text x="726" y="100" text-anchor="middle" style="font-size:18px;fill:var(--slate);font-weight:600">bring it to today</text>`;
+ g+=`<circle cx="850" cy="185" r="40" fill="url(#gold)" stroke="#a87b00" stroke-width="3"/><text x="850" y="194" text-anchor="middle" style="font-family:'Source Serif 4',serif;font-size:26px;fill:#5a3d00;font-weight:600">PV</text>`;
+ g+=`<text x="850" y="268" text-anchor="middle" style="font-family:'Source Serif 4',serif;font-size:24px;fill:var(--ink)">CF<tspan dy="6" font-size="15">t</tspan></text><line x1="800" x2="900" y1="280" y2="280" stroke="var(--ink)" stroke-width="1.5"/><text x="850" y="308" text-anchor="middle" style="font-family:'Source Serif 4',serif;font-size:24px;fill:var(--ink)">(1 + r)<tspan dy="-10" font-size="15">t</tspan></text>`;
+ g+=`<text x="850" y="350" text-anchor="middle" style="font-size:17px;fill:var(--mute)">what it is worth</text><text x="850" y="372" text-anchor="middle" style="font-size:17px;fill:var(--mute)">once we admit the damage</text>`;
+ A.forEach(([a,b,l],i)=>{g+=arrow(a,b,l,i)});
+ A.forEach(([a,b,l],i)=>{g+=`<text x="${a[0]+10}" y="${a[1]+(i===2?44:-18)}" style="font-size:24px;font-weight:700;fill:var(--red)">${l}</text>`});
+ $('#arrowsSvg').innerHTML=g;}
+
+/* ---------- lexicon picture ---------- */
+$('#lexSvg').innerHTML=AH+`
+<g transform="translate(70,40)"><circle cx="40" cy="22" r="18" fill="var(--slate)"/><path d="M8 92 Q8 50 40 50 Q72 50 72 92 Z" fill="var(--slate)"/></g>
+<g transform="translate(520,30)"><rect x="10" y="20" width="90" height="82" fill="var(--ink)"/><rect x="40" y="0" width="30" height="20" fill="var(--ink)"/>${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${22+c*26}" y="${32+r*22}" width="14" height="12" fill="var(--bg)"/>`).join('')).join('')}</g>
+<line x1="170" y1="62" x2="505" y2="62" stroke="var(--ink)" stroke-width="2" marker-end="url(#pa)"/>${T(337,52,'gives capital','text-anchor="middle" style="fill:var(--ink)"')}
+<line x1="505" y1="108" x2="170" y2="108" stroke="var(--red)" stroke-width="2" marker-end="url(#pa)"/>${T(337,128,'expects a return for the risk','text-anchor="middle" style="fill:var(--red)"')}
+<rect x="232" y="72" width="210" height="26" fill="var(--ink)"/>${T(337,90,'hurdle rate = discount rate, r','text-anchor="middle" style="fill:var(--bg);font-weight:600"')}
+${T(110,160,'Investor','text-anchor="middle" style="fill:var(--ink);font-weight:600;font-size:14px"')}${T(110,178,'required return','text-anchor="middle"')}
+${T(575,160,'Corporation','text-anchor="middle" style="fill:var(--ink);font-weight:600;font-size:14px"')}${T(575,178,'cost of capital','text-anchor="middle"')}`;
+
+/* ---------- NPV weigh-in picture ---------- */
+const SP=[-50000,15000,18000,20000,12000,8000],OP=[1,.82,.66,.5,.36];
+function npvPic(){const r=+$('#npR').value/100;$('#npROut').textContent=(r*100).toFixed(1)+'%';
+  const pvs=SP.slice(1).map((c,i)=>c/Math.pow(1+r,i+1)),tot=pvs.reduce((a,b)=>a+b,0),N=tot+SP[0];
+  $('#npOut').innerHTML=`<span class="${N>=0?'go':'no'}">${fmt(N)}</span>`;
+  live($('#npvPic'),(W,H)=>{const nar=W<520,m={t:34,b:40},base=H-m.b,top=m.t,max=Math.max(-SP[0],SP.slice(1).reduce((a,b)=>a+b,0)),Y=v=>base-(v/max)*(base-top);
+   const L=W*(nar?.38:.34),bw=Math.min(70,L*.3),cx1=L*.3,cx2=L*.72;let g='';
+   g+=`<line x1="10" x2="${W-10}" y1="${base}" y2="${base}" stroke="var(--rule)" stroke-width="1.5"/><line x1="${L+8}" x2="${L+8}" y1="${top-20}" y2="${base}" stroke="var(--rule)" stroke-dasharray="3 4"/>`;
+   g+=`<rect x="${cx1-bw/2}" y="${Y(-SP[0])}" width="${bw}" height="${base-Y(-SP[0])}" fill="var(--red)"/>`+T(cx1,base+18,'Cost','text-anchor="middle" style="fill:var(--ink);font-weight:600"')+T(cx1,Y(-SP[0])-6,short(-SP[0]),'text-anchor="middle"');
+   let acc=0;pvs.forEach((v,i)=>{const y1=Y(acc+v),y0=Y(acc);g+=`<rect x="${cx2-bw/2}" y="${y1}" width="${bw}" height="${y0-y1}" fill="var(--slate)" fill-opacity="${OP[i]}" stroke="var(--bg)"/>`;if(y0-y1>15)g+=T(cx2,(y0+y1)/2+4,'Y'+(i+1),'text-anchor="middle" style="fill:#fff;font-weight:600"');acc+=v});
+   g+=T(cx2,base+18,'Value today','text-anchor="middle" style="fill:var(--ink);font-weight:600"');
+   const a=Y(tot),b=Y(-SP[0]),gx=cx2+bw/2+8,col=N>=0?'var(--good)':'var(--bad)';
+   g+=`<line x1="${cx1-bw/2}" x2="${gx+6}" y1="${b}" y2="${b}" stroke="var(--red)" stroke-dasharray="4 3"/><path d="M${gx} ${a} h6 V${b} h-6" fill="none" stroke="${col}" stroke-width="2"/>`;
+   g+=T(gx+10,Math.min(a,b)-8,'NPV '+(N>=0?'+':'−')+short(Math.abs(N)),'text-anchor="end" style="fill:'+col+';font-weight:700"').replace('text-anchor="end"','text-anchor="middle"').replace(`x="${gx+10}"`,`x="${(cx1+cx2)/2+bw/2}"`);
+   const R0=L+24,RW=W-R0-14,step=RW/5,cw=Math.min(46,step*.55);
+   SP.slice(1).forEach((c,i)=>{const x=R0+step*i+step/2;g+=`<rect x="${x-cw/2}" y="${Y(c)}" width="${cw}" height="${base-Y(c)}" fill="none" stroke="var(--mute)" stroke-dasharray="4 3"/><rect x="${x-cw/2}" y="${Y(pvs[i])}" width="${cw}" height="${base-Y(pvs[i])}" fill="var(--slate)" fill-opacity="${OP[i]}"/>`+T(x,base+18,'Y'+(i+1),'text-anchor="middle" style="fill:var(--ink)"');
+     if(!nar)g+=T(x,Y(c)-6,short(c)+' → '+short(Math.round(pvs[i]/100)*100),'text-anchor="middle" style="font-size:11px"')});
+   g+=T(R0,top-14,'Future cash flows, shrunk to present value','style="fill:var(--ink);font-weight:600"')+T(10,top-14,'Today','style="fill:var(--ink);font-weight:600"');
+   return g})}
+$('#npR').addEventListener('input',npvPic);
+
+/* ---------- payback climb picture ---------- */
+let pbMode=0;
+function pbPic(){const r=.10,c=SP.map((x,t)=>pbMode?x/Math.pow(1+r,t):x);let cum=[],a=0;c.forEach(x=>{a+=x;cum.push(a)});const pb=payback(SP,pbMode?r:0);
+  live($('#pbPic'),(W,H)=>{const m={l:56,r:16,t:30,b:36},mx=Math.max(...cum.map(Math.abs))*1.18,Y=v=>m.t+(1-(v+mx)/(2*mx))*(H-m.t-m.b),step=(W-m.l-m.r)/cum.length,X=t=>m.l+step*t+step/2,cw=Math.min(60,step*.6);
+   let g=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.5"/>`+T(m.l-6,Y(0)+4,'$0','text-anchor="end" style="fill:var(--ink)"');
+   g+=T(m.l+6,Y(0)-8,'break-even','style="fill:var(--ink)"');
+   cum.forEach((v,t)=>{const after=pb!=null&&t>Math.ceil(pb);const col=after?'var(--rule)':v<0?'var(--red)':'var(--good)';g+=`<rect x="${X(t)-cw/2}" y="${Math.min(Y(v),Y(0))}" width="${cw}" height="${Math.abs(Y(v)-Y(0))}" fill="${col}"/>`+T(X(t),H-12,'Year '+t,'text-anchor="middle" style="fill:var(--ink)"')+T(X(t),v<0?Y(v)+16:Y(v)-6,short(Math.round(v/100)*100),'text-anchor="middle" style="fill:'+(after?'var(--mute)':'var(--ink)')+'"')});
+   if(pb!=null){const k=Math.ceil(pb)-1,px=X(k)+(X(k+1)-X(k))*(pb-k);g+=`<line x1="${px}" x2="${px}" y1="${m.t-6}" y2="${H-m.b+4}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="5 4"/><circle cx="${px}" cy="${Y(0)}" r="6" fill="var(--ink)"/>`+T(px+8,m.t+6,(pbMode?'Discounted payback ':'Payback ')+pb.toFixed(2)+' yrs','style="fill:var(--ink);font-weight:700"');
+     const gx=X(Math.ceil(pb)+0.0001>pb?Math.ceil(pb):Math.ceil(pb));if(Math.ceil(pb)<cum.length)g+=T(Math.min(W-m.r-4,(X(Math.ceil(pb))+X(cum.length-1))/2+40),Y(-mx*.75),'ignored by payback','text-anchor="end" style="font-style:italic"')}
+   return g})}
+$$('[data-pb]').forEach(b=>b.onclick=()=>{pbMode=+b.dataset.pb;$$('[data-pb]').forEach(x=>x.classList.toggle('on',x===b));pbPic()});
+
+/* ---------- tools matrix ---------- */
+{const Y='<span class="y">✓</span>',N='<span class="n">✗</span>',P='<span class="p">partly</span>';
+ $('#mx').innerHTML=[['Payback',N,N,N,N,N],['Discounted payback',Y,N,N,N,N],['NPV',Y,Y,Y,Y,Y],['IRR',Y,Y,N,N,N],['MIRR',Y,Y,N,Y,P]].map(r=>`<tr class="${r[0]==='NPV'?'best':''}">${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}
+
+/* ---------- finance math ---------- */
+const npv=(r,c)=>c.reduce((s,x,t)=>s+x/Math.pow(1+r,t),0);
+function irrs(c){const out=[];let a=-0.95,fa=npv(a,c);for(let r=a+0.0025;r<=3;r+=0.0025){const fb=npv(r,c);
+  if(fa*fb<0){let lo=a,hi=r,flo=fa;for(let k=0;k<60;k++){const m=(lo+hi)/2,fm=npv(m,c);if(flo*fm<=0)hi=m;else{lo=m;flo=fm}}out.push((lo+hi)/2)}a=r;fa=fb}return out}
+function payback(c,r){let cum=c[0]/1;for(let t=1;t<c.length;t++){const v=c[t]/Math.pow(1+r,t),prev=cum;cum+=v;if(prev<0&&cum>=0)return t-1+(-prev)/v}return null}
+function mirrs(c,r){const T=c.length-1;let pvneg=0,fvpos=0,fvall=0;c.forEach((x,t)=>{if(x<0)pvneg+=x/Math.pow(1+r,t);else fvpos+=x*Math.pow(1+r,T-t);if(t>0)fvall+=x*Math.pow(1+r,T-t)});
+  const m1=irrs(c.map((x,t)=>t===0?pvneg:(x>0?x:0)))[0];const m2=c[0]<0&&fvall>0?Math.pow(fvall/-c[0],1/T)-1:null;const m3=pvneg<0&&fvpos>0?Math.pow(fvpos/-pvneg,1/T)-1:null;return [m1??null,m2,m3]}
+
+/* ---------- chart ---------- */
+function chart(svg,{series,xmax,hurdle,marks=[]}){
+  const draw=()=>{const W=svg.clientWidth,H=svg.clientHeight;if(!W)return;const narrow=W<520;
+   const m={l:narrow?54:72,r:14,t:16,b:36};const xs=series[0].pts.map(p=>p[0]);
+   let ys=series.flatMap(s=>s.pts.map(p=>p[1]));let y0=Math.min(0,...ys),y1=Math.max(0,...ys);const pad=(y1-y0)*.08||1;y0-=pad;y1+=pad;
+   const X=x=>m.l+(x/xmax)*(W-m.l-m.r),Y=y=>m.t+(1-(y-y0)/(y1-y0))*(H-m.t-m.b);
+   const step=niceStep((y1-y0)/(narrow?4:6));let g='';
+   for(let v=Math.ceil(y0/step)*step;v<=y1;v+=step){g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--rule)" stroke-width="${Math.abs(v)<step/1e6?1.5:.5}"/><text x="${m.l-6}" y="${Y(v)+4}" text-anchor="end">${short(v)}</text>`}
+   const xstep=narrow?10:5;for(let v=0;v<=xmax+1e-9;v+=xstep/100)g+=`<text x="${X(v)}" y="${H-m.b+18}" text-anchor="middle">${Math.round(v*100)}%</text>`;
+   g+=`<text x="${W-m.r}" y="${H-4}" text-anchor="end">discount rate</text>`;
+   if(hurdle!=null)g+=`<line x1="${X(hurdle)}" x2="${X(hurdle)}" y1="${m.t}" y2="${H-m.b}" stroke="var(--red)" stroke-width="1.5"/>`;
+   series.forEach(s=>{g+=`<path d="${s.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+' '+Y(p[1]).toFixed(1)).join('')}" fill="none" stroke="${s.c}" stroke-width="2.5" ${s.dash?'stroke-dasharray="6 4"':''}/>`;
+     if(s.label){const p=s.pts[Math.floor(s.pts.length*.12)];g+=`<text x="${X(p[0])+6}" y="${Y(p[1])-8}" style="fill:${s.c};font-weight:600">${s.label}</text>`}});
+   marks.forEach(([x,y,c,t,dy=-10])=>{if(x<0||x>xmax)return;g+=`<circle cx="${X(x)}" cy="${Y(y)}" r="5" fill="${c}" stroke="var(--bg)" stroke-width="2"/>`;if(t)g+=`<text x="${X(x)}" y="${Y(y)+dy}" text-anchor="middle" style="fill:var(--ink);font-weight:500">${t}</text>`});
+   svg.innerHTML=g};
+  svg._draw=draw;if(!svg._ro){svg._ro=new ResizeObserver(()=>svg._draw());svg._ro.observe(svg)}draw();
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return (n<1.5?1:n<3?2:n<7?5:10)*p}
+function short(v){const a=Math.abs(v);const s=a>=1e6?(a/1e6).toFixed(a%1e6?1:0)+'M':a>=1e3?(a/1e3).toFixed(a%1e3?1:0)+'K':String(+a.toFixed(2));return (v<0?'−':'')+s}
+const prof=(c,xmax)=>{const p=[];for(let r=0;r<=xmax+1e-9;r+=xmax/200)p.push([r,npv(r,c)]);return p};
+
+/* ---------- Lab 1 ---------- */
+const PRE={'Simple project':{c:[-50000,15000,18000,20000,12000,8000],r:10},'Project A':{c:[-100,50,40,40,30],r:10},'Project B':{c:[-100,20,40,50,60],r:10},
+ 'Utah Jazz contract':{c:[-10e6,7.5e6,7.5e6,5.5e6,-.5e6,-.5e6,-3.5e6,-4.5e6,-5.5e6],r:12}};
+let CF=[...PRE['Simple project'].c];
+$('#presets').innerHTML='<span style="color:var(--mute);font-size:14px">Load a case:</span>'+Object.keys(PRE).map(k=>`<button class="sm" data-pre="${k}">${k}</button>`).join('');
+function loadPre(k){CF=[...PRE[k].c];$('#hr').value=PRE[k].r;rows();lab()}
+$$('[data-pre]').forEach(b=>b.onclick=()=>loadPre(b.dataset.pre));
+function rows(){$('#cfRows').innerHTML=CF.map((x,t)=>`<span>Year ${t}</span><input data-t="${t}" value="${x}" inputmode="decimal" aria-label="Cash flow year ${t}">`).join('');
+  $$('#cfRows input').forEach(i=>i.addEventListener('input',()=>{const v=parseFloat(i.value.replace(/[$,\s]/g,''));if(!isNaN(v)){CF[+i.dataset.t]=v;i.style.borderColor='';lab()}else i.style.borderColor='var(--bad)'}))}
+$('#addYr').onclick=()=>{if(CF.length<16){CF.push(CF[CF.length-1]);rows();lab()}};
+$('#rmYr').onclick=()=>{if(CF.length>2){CF.pop();rows();lab()}};
+$('#hr').addEventListener('input',lab);
+$('#loadJazz').onclick=()=>{loadPre('Utah Jazz contract');location.hash='#capital-budgeting';$('#presets').scrollIntoView({behavior:'smooth'})};
+function lab(){const r=+$('#hr').value/100;$('#hrOut').textContent=(r*100).toFixed(2)+'%';
+  const N=npv(r,CF),I=irrs(CF).filter(x=>x>-0.5),M=mirrs(CF,r),pb=payback(CF,0),dpb=payback(CF,r);
+  const xmax=Math.max(.5,Math.min(1,(Math.max(0,...I)+.1)));
+  chart($('#profSvg'),{series:[{pts:prof(CF,xmax),c:'var(--slate)'}],xmax,hurdle:r,marks:[...I.map(x=>[x,0,'var(--ink)','IRR '+pct(x,1)]),[r,N,'var(--red)','NPV '+short(N),N>=0?-12:22]]});
+  const st=[['NPV at hurdle',fmt(N)],['IRR',I.length?I.map(x=>pct(x)).join(' & '):'none'],['MIRR (combination)',M[2]!=null?pct(M[2]):'n/a'],['Payback',pb!=null?pb.toFixed(2)+' yrs':'never'],['Discounted payback',dpb!=null?dpb.toFixed(2)+' yrs':'never'],['Sum of cash flows',fmt(CF.reduce((a,b)=>a+b,0))]];
+  $('#labStats').innerHTML=st.map(([a,b])=>`<div><small>${a}</small><strong>${b}</strong></div>`).join('');
+  const v=(ok,txt)=>`<div>${ok?'<span class="go">Go</span>':'<span class="no">No go</span>'} · ${txt}</div>`;
+  const irrGo=I.length===1?I[0]>r:I.length>1?I.some(x=>x>r):false;
+  let h='<strong>What each rule says</strong>'+v(N>0,'NPV '+(N>0?'&gt;':'&lt;')+' 0')+(I.length?v(irrGo,I.length>1?'IRR above hurdle (but there are '+I.length+' IRRs)':'IRR '+(irrGo?'&gt;':'&lt;')+' hurdle'):'<div>IRR · no IRR exists</div>')+(M[2]!=null?v(M[2]>r,'MIRR '+(M[2]>r?'&gt;':'&lt;')+' hurdle'):'');
+  const dis=I.length&&irrGo!==(N>0);if(dis)h+=`<div class="note" style="font-size:14px">IRR and NPV disagree here. ${I.length>1?'Non-conventional cash flows produce multiple IRRs; trust NPV, or use MIRR.':'Trust NPV.'}</div>`;
+  $('#verdicts').innerHTML=h}
+
+/* ---------- Lab 2: A vs B ---------- */
+const A=PRE['Project A'].c,B=PRE['Project B'].c,iA=irrs(A)[0],iB=irrs(B)[0],xo=irrs(A.map((x,i)=>x-B[i]))[0];
+$('#abTbl').innerHTML=A.map((x,i)=>`<tr><td>${i}</td><td>${x}</td><td>${B[i]}</td></tr>`).join('')+`<tr><td>IRR</td><td>${pct(iA,1)}</td><td>${pct(iB,1)}</td></tr>`;
+function ab(){const r=+$('#abR').value/100;$('#abROut').textContent=(r*100).toFixed(2)+'%';const a=npv(r,A),b=npv(r,B);
+  chart($('#abSvg'),{series:[{pts:prof(A,.3),c:'var(--slate)',label:'A'},{pts:prof(B,.3),c:'var(--red)',label:'B',dash:1}],xmax:.3,hurdle:r,marks:[[xo,npv(xo,A),'var(--ink)','crossover '+pct(xo,1),-16]]});
+  const win=a>b?'A':'B';$('#abMsg').innerHTML=`NPV<sub>A</sub> = ${a.toFixed(2)}, NPV<sub>B</sub> = ${b.toFixed(2)}.<br>IRR always picks <strong>A</strong> (${pct(iA,1)} vs ${pct(iB,1)}). NPV picks <strong>${win}</strong>. `+(win==='B'?`<span class="no">They disagree</span> below the ${pct(xo,1)} crossover: B’s larger, later cash flows are worth more when the discount rate is low.`:`<span class="go">They agree</span> above the crossover rate.`)}
+$('#abR').addEventListener('input',ab);
+
+/* ---------- Jazz MIRR table ---------- */
+{const J=PRE['Utah Jazz contract'].c,M=mirrs(J,.12),I=irrs(J);$('#jazzT').innerHTML=[['NPV',fmt(npv(.12,J))],['IRRs',I.map(x=>pct(x)).join(' & ')],['MIRR #1 discounting',pct(M[0],3)],['MIRR #2 reinvestment',pct(M[1],3)],['MIRR #3 combination',pct(M[2],3)]].map(([a,b])=>`<tr><td>${a}</td><td>${b}</td></tr>`).join('')}
+
+/* ---------- tools ---------- */
+const TOOLS=[['Payback period','Years to recover the initial investment.','Shorter is better, against an arbitrary cutoff.',['Easy and intuitive','Favors liquidity'],['Ignores time value','Ignores cash flows after the cutoff','Can accept negative-NPV projects']],
+ ['Discounted payback','Years to recover the investment using present values.','Shorter is better, against a cutoff.',['Includes time value','Never accepts a negative-NPV project'],['Still an arbitrary cutoff','May reject positive-NPV projects','If you have r, why not use NPV?']],
+ ['Net present value',`NPV = CF<sub>0</sub> + Σ ${fr('CF<sub>t</sub>','(1+r)<sup>t</sup>')}`,'Go if NPV &gt; 0; for mutually exclusive projects, pick the highest NPV.',['Handles time and risk correctly','Value added in today’s dollars'],['Harder to explain','Sensitive to inputs','Assumes reinvestment at r']],
+ ['Internal rate of return','The discount rate that makes NPV = 0.','Go if IRR &gt; hurdle rate.',['Closely tied to NPV','Intuitive “do we beat the hurdle?”'],['Assumes reinvestment at the IRR','Can misrank mutually exclusive projects','Multiple IRRs with non-conventional cash flows']],
+ ['Modified IRR','IRR after discounting negatives and/or compounding positives at r.','Go if MIRR &gt; hurdle rate.',['One answer even with sign changes','Reinvests at r, not at the IRR'],['Three versions in use','Still a rate, not dollars of value']]];
+$('#tools').innerHTML=TOOLS.map(([n,d,r,p,c])=>`<div class="card"><h3>${n}</h3><p style="font-size:15px">${d}</p><p style="font-size:15px"><strong>Rule:</strong> ${r}</p><details><summary>Pros and cons</summary><div class="pros"><div><strong class="go">Pros</strong><ul>${p.map(x=>`<li>${x}</li>`).join('')}</ul></div><div><strong class="no">Cons</strong><ul>${c.map(x=>`<li>${x}</li>`).join('')}</ul></div></div></details></div>`).join('');
+
+/* ---------- practice ---------- */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));let P,score=[0,0];
+const CTX=['a new packaging line','a regional distribution center','an expansion into a new market','a software platform upgrade','a solar array for a plant','a new product launch'];
+function newP(){let c,r;do{const T=ri(4,6),I=ri(20,90)*1000;r=ri(6,14)/100;const tot=I*(1.15+Math.random()*.5);let w=Array.from({length:T},()=>.5+Math.random());const s=w.reduce((a,b)=>a+b,0);c=[-I,...w.map(x=>Math.round(tot*x/s/100)*100)]}while(payback(c,r)==null||Math.abs(npv(r,c))<300);
+  P={c,r,npv:npv(r,c),irr:irrs(c)[0],pb:payback(c,0),dpb:payback(c,r)};
+  $('#pq').innerHTML=`<p>Your firm is considering ${CTX[ri(0,CTX.length-1)]}. The hurdle rate is <strong>${(r*100).toFixed(0)}%</strong>. Expected cash flows:</p><div class="scroll"><table style="max-width:${120+c.length*110}px"><tr><th>Year</th>${c.map((_,t)=>`<th>${t}</th>`).join('')}</tr><tr><td>Cash flow</td>${c.map(x=>`<td>${fmt(x)}</td>`).join('')}</tr></table></div>`;
+  ['aPb','aDpb','aNpv','aIrr'].forEach(i=>$('#'+i).value='');$('#aDec').value='';$$('.mark').forEach(m=>m.innerHTML='');$('#solBox').innerHTML=''}
+const num=s=>parseFloat(String(s).replace(/[$,%\s]/g,'').replace('−','-'));
+$('#chk').onclick=()=>{const F=[['aPb','mPb',P.pb,v=>Math.abs(v-P.pb)<=.02],['aDpb','mDpb',P.dpb,v=>P.dpb!=null&&Math.abs(v-P.dpb)<=.02],['aNpv','mNpv',P.npv,v=>Math.abs(v-P.npv)<=Math.max(5,Math.abs(P.npv)*.005)],['aIrr','mIrr',P.irr,v=>Math.abs(v/100-P.irr)<=.001]];
+  let ok=0,n=0;for(const [i,m,_,t] of F){const raw=$('#'+i).value.trim();if(!raw){$('#'+m).innerHTML='<span class="err">Enter an answer</span>';continue}const v=num(raw);if(isNaN(v)){$('#'+m).innerHTML='<span class="err">Enter a number</span>';continue}n++;const g=t(v);ok+=g;$('#'+m).innerHTML=g?'<span class="ok">Correct</span>':'<span class="err">Not quite</span>'}
+  const d=$('#aDec').value;if(!d)$('#mDec').innerHTML='<span class="err">Choose one</span>';else{n++;const g=(d==='go')===(P.npv>0);ok+=g;$('#mDec').innerHTML=g?'<span class="ok">Correct</span>':'<span class="err">Check the NPV rule</span>'}
+  if(n){score[0]+=ok;score[1]+=n;$('#score').textContent=`Session: ${score[0]} of ${score[1]} correct`}};
+$('#sol').onclick=()=>{const {c,r}=P;let cum=0,cpv=0;const rows=c.map((x,t)=>{const pv=x/Math.pow(1+r,t);cum+=x;cpv+=pv;return `<tr><td>${t}</td><td>${fmt(x)}</td><td>${fmt(pv,2)}</td><td>${fmt(cum)}</td><td>${fmt(cpv,2)}</td></tr>`}).join('');
+  const k=Math.ceil(P.pb)-1;
+  $('#solBox').innerHTML=`<div class="card"><div class="scroll"><table><thead><tr><th>Year</th><th>Cash flow</th><th>PV at ${(r*100).toFixed(0)}%</th><th>Cumulative</th><th>Cumulative PV</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p style="margin-top:12px;font-size:15px"><strong>Payback:</strong> ${k} full years, then ${fmt(-c.slice(0,k+1).reduce((a,b)=>a+b,0))} still to recover ÷ ${fmt(c[k+1])} in year ${k+1} = <strong>${P.pb.toFixed(2)} years</strong>.<br>
+  <strong>Discounted payback:</strong> the same idea on the PV column = <strong>${P.dpb.toFixed(2)} years</strong>.<br>
+  <strong>NPV:</strong> sum of the PV column = <strong>${fmt(P.npv,2)}</strong>. In Excel: <code>=NPV(${(r*100).toFixed(0)}%, CF1:CF${c.length-1}) + CF0</code>.<br>
+  <strong>IRR:</strong> the rate that sets NPV to zero = <strong>${pct(P.irr)}</strong> (<code>=IRR(CF0:CF${c.length-1})</code>).<br>
+  <strong>Decision:</strong> ${P.npv>0?'<span class="go">Go</span>: NPV is positive and IRR exceeds the hurdle rate.':'<span class="no">No go</span>: NPV is negative and IRR falls short of the hurdle rate.'}</p></div>`};
+$('#newP').onclick=newP;
+
+/* ---------- concept quiz ---------- */
+const QZ=[['A project has an IRR of 18% and the hurdle rate is 12%. With conventional cash flows, its NPV at 12% is…',['Positive','Negative','Zero','Impossible to tell'],0,'With conventional cash flows, NPV falls as the rate rises and hits zero at the IRR. At any rate below the IRR, NPV is positive.'],
+ ['The Utah Jazz contract has two IRRs, both above the 12% hurdle, but a negative NPV. What should the GM do?',['Sign him: both IRRs beat the hurdle','Pass: trust NPV (and MIRR, which falls below 12%)','Average the two IRRs and compare','Use payback instead'],1,'Sign changes in the cash flows create multiple IRRs that mean little. NPV is the gold standard, and MIRR confirms it.'],
+ ['Which rule never accepts a negative-NPV project but may reject a positive-NPV one?',['Payback period','Discounted payback','IRR','NPV'],1,'Recovering the investment in present-value terms guarantees a positive NPV, but the arbitrary cutoff can reject good long-lived projects.'],
+ ['Projects A and B are mutually exclusive. IRR favors A; NPV at your hurdle favors B. Choose…',['A, because its rate of return is higher','B, because it adds more value in today’s dollars','Whichever pays back faster','Both'],1,'IRR can misrank mutually exclusive projects of different timing or scale. Pick the project that adds the most value: highest NPV.'],
+ ['Cells B1:B6 hold the time-0 outlay through year 5. What is wrong with =NPV(10%, B1:B6)?',['Nothing','It discounts every cash flow one period too many','It ignores the outlay','NPV needs a monthly rate'],1,'Excel treats the first value as arriving at the end of period 1. Use =NPV(10%, B2:B6) + B1.'],
+ ['What does the payback period ignore?',['The initial outlay','Time value and cash flows after the cutoff','The size of early cash flows','Nothing'],1,'Payback is easy to explain, but it gives no weight to timing within the period and none to anything after the cutoff.'],
+ ['Which statement about reinvestment assumptions is correct?',['NPV assumes reinvestment at the IRR','IRR assumes reinvestment at the IRR; NPV at the discount rate','Both assume reinvestment at 0%','MIRR assumes reinvestment at the IRR'],1,'This is one reason MIRR exists: it reinvests at r, as NPV does.']];
+let qi=0,qs=0,qa=0;function quiz(){const [q,o,a,e]=QZ[qi];$('#qN').textContent=`Question ${qi+1} of ${QZ.length}`;$('#qS').textContent=qa?`Score: ${qs} of ${qa}`:'';$('#qQ').textContent=q;$('#qE').textContent='';$('#qNext').style.display='none';
+ $('#qO').innerHTML=o.map((x,i)=>`<button class="opt" data-i="${i}">${esc(x)}</button>`).join('');
+ $$('#qO .opt').forEach(b=>b.onclick=()=>{if($('#qO').dataset.done==='1')return;$('#qO').dataset.done='1';const i=+b.dataset.i;qa++;if(i===a)qs++;b.classList.add(i===a?'right':'wrong');$$('#qO .opt')[a].classList.add('right');$('#qE').innerHTML=`<strong>${i===a?'Right.':'Not quite.'}</strong> ${esc(e)}`;$('#qS').textContent=`Score: ${qs} of ${qa}`;$('#qNext').style.display='';$('#qNext').textContent=qi===QZ.length-1?'Start over':'Next question'});$('#qO').dataset.done='0'}
+$('#qNext').onclick=()=>{qi=(qi+1)%QZ.length;if(qi===0){qs=0;qa=0}quiz()};
+
+rows();lab();ab();newP();quiz();npvPic();pbPic();route();
+$$('[data-jump]').forEach(b=>{const go=()=>document.getElementById(b.dataset.jump).scrollIntoView({behavior:'smooth'});b.onclick=go;b.onkeydown=e=>{if(e.key==='Enter')go()}});
+Object.values(LEARN).flat().forEach(m=>{try{m.init()}catch(e){console.error(e)}});
+Object.keys(PR).forEach(id=>{try{initPractice(id)}catch(e){console.error(e)}});
+window.__PR=PR;
+}
+</script>
+</body>
+</html>
