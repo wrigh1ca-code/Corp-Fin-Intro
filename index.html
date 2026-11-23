@@ -162,21 +162,6 @@ footer{font-size:13px;color:var(--mute)}
       </figure>
     </div>
   </div>
-  <div class="band alt" id="lecture-0">
-    <div class="kicker"><b>Lecture 0</b> · The basics of asset valuation</div>
-    <h2>What drives the value of any asset?</h2>
-    <div id="chain"></div>
-    <div class="row"><button class="sm" id="chPrev">Back</button><button class="sm pri" id="chNext">Next</button><div class="dots" id="chDots"></div></div>
-  </div>
-  <div class="band">
-    <div class="kicker" id="arrows-0"><b>Lecture 0</b> · Why future cash flows are worth less</div>
-    <h2>Every future cash flow is under attack</h2>
-    <p>A dollar promised later is worth less than a dollar in hand, for three reasons. <strong>Inflation</strong> erodes what it will buy. <strong>Opportunity cost</strong>: money tied up here can’t earn a return somewhere else. <strong>Uncertainty</strong>: the cash may not show up at all. Nothing stops these arrows. <strong>Estimating present value is how we acknowledge them</strong>: the discount rate <i>r</i> puts a price on all three, so what a future cash flow is worth today already reflects the damage.</p>
-    <figure class="pic" style="margin-top:8px">
-      <svg id="arrowsSvg" viewBox="0 0 960 400" width="100%" role="img" aria-label="Three flaming arrows labeled inflation, opportunity cost and uncertainty strike a pile of future cash flows; discounting brings what is left to a smaller present value"></svg>
-      <figcaption>r = real return (opportunity cost) + expected inflation + risk premium (uncertainty). You will meet this decomposition again with bonds (Lecture 4) and the cost of capital (Lecture 9).</figcaption>
-    </figure>
-  </div>
 </section>
 
 <!-- ============ CAPITAL BUDGETING ============ -->
@@ -321,7 +306,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 /* ---------- equation component ---------- */
 function eqHTML(hl,hero){
   const h=k=>hl==='all'||(Array.isArray(hl)&&hl.includes(k))?' hl':'';
-  return (hero?`<span class="pc" data-k="v">Value</span> = <span class="pc" data-k="v">F(E[utility])</span> = `:'Value = ')+`<span class="sig"><span class="pc${h('T')}" data-k="T">T</span><b>Σ</b><span>t=1</span></span>`+
+  return (hero?`<span class="pc${h('v')}" data-k="v">Value</span> = <span class="pc${h('v')}" data-k="v">F(E[utility])</span> = `:'Value = ')+`<span class="sig"><span class="pc${h('T')}" data-k="T">T</span><b>Σ</b><span>t=1</span></span>`+
    fr(`<span class="pc${h('fc')}" data-k="fc">E</span>[<span class="pc${h('cf')}" data-k="cf">CF<sub>t</sub></span>]`,
       `(1 + <span class="pc${h('r')}" data-k="r">r</span>)<sup>t</sup>`);
 }
@@ -332,6 +317,9 @@ const Q={v:{tag:'Value',q:'What is value?',d:'Value is a function of expected ut
  T:{tag:'T',q:'When is “T”?',d:'Finite streams, perpetuities, and terminal values for firms that never end.'},
  r:{tag:'r',q:'What is the right r?',d:'The discount rate: time, inflation, opportunity cost and risk.'}};
 const L=[
+ {id:'asset-valuation',n:0,t:'The basics of asset valuation',q:['v'],br:'Asset purchases and sales',big:'Value is the sum of the present values of expected future cash flows. This lecture builds that idea from scratch, starting with why anyone is willing to pay for anything.',
+  con:['Reservation prices form the demand curve, and demand sets the market price','A reservation price is a function of expected utility','Consumption assets deliver utility that depends on personal taste; financial assets deliver only future cash flows','Inflation, opportunity cost and uncertainty make future cash worth less today','Discounting at r acknowledges all three: r = real return + expected inflation + risk premium','Valuing an asset raises four questions: what cash flows, how to forecast them, when is T, and what is the right r?'],
+  f:[`Value = F(E[utility])`,`Value = Σ ${fr('E[CF<sub>t</sub>]','(1 + r)<sup>t</sup>')}`,`r = real return + E(inflation) + risk premium`],todo:['']},
  {id:'fcff',n:1,t:'Free cash flows to the firm',q:['cf'],br:'Deployment',big:'Value is built on free cash flow to the firm: the cash left for all financiers after the firm reinvests in fixed assets and working capital.',
   con:['FCF = operating cash flow − net capital spending − change in net working capital','Financing-side check: FCF = cash flow to creditors + cash flow to shareholders','Why add back depreciation in net capital spending: CapEx = End NFA − Beg NFA + Depreciation','Start with EBIT, not EBT: interest is a payment to financiers and belongs inside FCF','Taxes are computed on EBIT; the interest tax shield is handled later in the discount rate','Reconciling with the GAAP statement of cash flows: add back after-tax interest (Netflix example)'],
   f:[`FCF = EBIT(1 − T) + Dep − NCS − ΔNWC`,`NCS = End NFA − Beg NFA + Dep`,`ΔNWC = (CA − CL)<sub>end</sub> − (CA − CL)<sub>beg</sub>`],
@@ -381,6 +369,10 @@ function nrm(u){return()=>{const a=u()||1e-9,b=u();return Math.sqrt(-2*Math.log(
 const n0=(x,d=0)=>x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 
 const LEARN={};
+LEARN['asset-valuation']=[
+ {html:`<div class="learn"><div class="kicker"><b>Learn it</b> · Reservation prices</div><h2>What drives the value of any asset?</h2><p>Start with something familiar, a snowmobile, and follow the chain from what one buyer would pay to the price in the market. Then swap the snowmobile for a share of stock and see what changes.</p><div id="chain"></div><div class="row"><button class="sm" id="chPrev">Back</button><button class="sm pri" id="chNext">Next</button><div class="dots" id="chDots"></div></div></div>`,init(){}},
+ {html:`<div class="learn"><div class="kicker"><b>Learn it</b> · Why future cash flows are worth less</div><h2>Every future cash flow is under attack</h2><p>A dollar promised later is worth less than a dollar in hand, for three reasons. <strong>Inflation</strong> erodes what it will buy. <strong>Opportunity cost</strong>: money tied up here can’t earn a return somewhere else. <strong>Uncertainty</strong>: the cash may not show up at all. Nothing stops these arrows. <strong>Estimating present value is how we acknowledge them</strong>: the discount rate <i>r</i> puts a price on all three, so what a future cash flow is worth today already reflects the damage.</p><figure class="pic" style="margin-top:8px"><svg id="arrowsSvg" viewBox="0 0 960 400" width="100%" role="img" aria-label="Three flaming arrows labeled inflation, opportunity cost and uncertainty strike a pile of future cash flows; discounting brings what is left to a smaller present value"></svg><figcaption>r = real return (opportunity cost) + expected inflation + risk premium (uncertainty). You will meet this decomposition again with bonds (Lecture 4) and the cost of capital (Lecture 9).</figcaption></figure></div>`,init(){}}];
+
 
 /* ---------- Lecture 1: FCFF ---------- */
 const FW=[['EBIT','EBIT',1014,'s','Start with EBIT: operating profit before anyone who financed the firm gets paid.'],
@@ -720,6 +712,19 @@ function initQuiz(p,QZ){let i=0,s=0,a=0;const show=()=>{const [q,o,c,e]=QZ[i];$(
   O.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(O.dataset.done)return;O.dataset.done=1;const j=+b.dataset.i;a++;if(j===c)s++;b.classList.add(j===c?'right':'wrong');O.querySelectorAll('.opt')[c].classList.add('right');$('#'+p+'E').innerHTML=`<strong>${j===c?'Right.':'Not quite.'}</strong> ${esc(e)}`;$('#'+p+'S').textContent=`Score: ${s} of ${a}`;$('#'+p+'X').style.display='';$('#'+p+'X').textContent=i===QZ.length-1?'Start over':'Next question'})};
  $('#'+p+'X').onclick=()=>{i=(i+1)%QZ.length;if(!i){s=0;a=0}show()};show()}
 
+/* ---------- 0 Basics ---------- */
+PR['asset-valuation']={types:[
+ {n:'Price a promise',g(){const C=rr(1,20,1)*1000,t=rr(2,15,1),inf=rr(1,4,.25),re=rr(1,3,.25),rp=rr(0,8,.5),r=(inf+re+rp)/100,P=C/Math.pow(1+r,t);return {q:`<p>Someone promises to pay you <strong>${D$(C)}</strong> in <strong>${t} years</strong>. You expect inflation of <strong>${inf.toFixed(2)}%</strong>, you could earn a real return of <strong>${re.toFixed(2)}%</strong> elsewhere, and you want a <strong>${rp.toFixed(1)}%</strong> premium for the risk the promise is broken. What is your reservation price today?</p>`,
+  f:[{l:'Discount rate r (%)',a:r*100,t:.01,u:'%'},{l:'Most you would pay today ($)',a:P,t:Math.max(1,P*.002)}],s:`<p>r = real return + expected inflation + risk premium = ${re.toFixed(2)}% + ${inf.toFixed(2)}% + ${rp.toFixed(1)}% = <strong>${(r*100).toFixed(2)}%</strong><br>PV = ${fr(D$(C),'(1 + '+(r*100).toFixed(2)+'%)<sup>'+t+'</sup>')} = <strong>${D$(P,2)}</strong></p>`}}},
+ {n:'Is it worth it?',g(){const cf=[rr(1,10,.5)*1000,rr(1,10,.5)*1000,rr(3,15,.5)*1000],r=rr(4,14,.5)/100,V=cf.reduce((a,c,i)=>a+c/Math.pow(1+r,i+1),0),ask=Math.round(V*rr(.85,1.15,.01)/50)*50,yes=V>ask?'Yes':'No';
+  return {q:`<p>An asset will pay <strong>${cf.map(D$).join(', ')}</strong> at the end of years 1, 2 and 3. Assets of similar risk return <strong>${(r*100).toFixed(1)}%</strong>. The seller is asking <strong>${D$(ask)}</strong>.</p>`,f:[{l:'Value today ($)',a:V,t:Math.max(1,V*.002)},{l:'Is it worth it?',a:yes,o:['Yes','No']}],
+  s:`<p>Value = ${cf.map((c,i)=>fr(D$(c),'(1.'+String(Math.round(r*1000)).padStart(3,'0')+')<sup>'+(i+1)+'</sup>')).join(' + ')} = <strong>${D$(V,2)}</strong><br>${yes==='Yes'?`Value exceeds the ${D$(ask)} price by ${D$(V-ask)}: <strong>worth it</strong>.`:`The ${D$(ask)} price exceeds value by ${D$(ask-V)}: <strong>not worth it</strong>.`}</p>`}}}],
+ quiz:[['What is the primary driver of the value of any asset?',['Its cost to produce','What buyers expect to get out of it: expected utility','Its accounting book value','Last year’s price'],1,'Expected utility sets reservation prices, reservation prices form the demand curve, and demand sets the market price.'],
+  ['What makes financial assets different from consumption assets?',['They are riskier','Their only utility is the future cash flows they deliver','They never lose value','They are cheaper'],1,'A car or a pair of skis delivers enjoyment that varies by person; a bond or a share delivers cash.'],
+  ['Which of these is NOT one of the three forces that make future cash worth less today?',['Inflation','Opportunity cost','Uncertainty','Depreciation'],3,'The discount rate prices inflation, opportunity cost and uncertainty.'],
+  ['An investment is worth it when…',['Its price is low','Its value exceeds the price you pay','It pays a dividend','Its cash flows grow'],1,'That single comparison is the question behind every topic in the course.'],
+  ['You demand a higher risk premium on a promised cash flow. Its present value…',['Rises','Falls','Is unchanged','Doubles'],1,'A higher r means a bigger penalty on future cash: discounting acknowledges more damage.']]};
+
 /* ---------- 1 FCFF ---------- */
 PR.fcff={types:[
  {n:'Free cash flow',g(){const EBIT=rr(600,1600,1),Dep=rr(150,500,1),Tr=pick([.21,.25,.3]),Tax=Math.round(EBIT*Tr),bN=rr(1500,3200,1),cap=rr(Dep-100,Dep+500,1),eN=bN+cap-Dep,bCA=rr(2000,4000,1),bCL=rr(1000,2400,1),eCA=bCA+rr(-300,500,1),eCL=bCL+rr(-300,400,1);
@@ -847,7 +852,7 @@ PR.wacc={types:[
   ['Why does debt enter WACC as R_D(1 − T)?',['Banks offer a discount','Interest is tax-deductible, lowering its true cost','Dividends are deductible','Debt is riskless'],1,'$100,000 of 10% debt at a 35% tax rate costs $6,500 after tax: 6.5%.'],
   ['A firm is evaluating a project unlike its existing business. Its beta should come from…',['The firm’s own beta','Pure-play comparables in the project’s line of business, unlevered and relevered','The market beta of 1','The risk-free rate'],1,'Use comps’ asset betas, then relever at the project’s capital structure.']]};
 
-const WORTH={fcff:'You can’t judge whether something is worth it until you know which cash it actually puts in its owners’ pockets.',
+const WORTH={'asset-valuation':'Something is worth it when its value exceeds its price. This lecture asks what value is in the first place.',fcff:'You can’t judge whether something is worth it until you know which cash it actually puts in its owners’ pockets.',
  forecasting:'Worth it depends on the future, so we forecast the statements that will produce the cash.',
  tvm:'A dollar later is not a dollar now. Whether something is worth it has to be judged in today’s dollars.',
  bonds:'Is this bond worth its price? Compare the present value of its coupons and principal with what the market asks.',
@@ -867,7 +872,7 @@ $('#stubs').innerHTML=L.filter(l=>!l.full).map(l=>`<section class="page" id="p-$
  <div><h2>Key equations</h2>${l.f.map(f=>`<div class="card" style="margin-bottom:10px"><span class="eq" style="font-size:20px">${f}</span></div>`).join('')}</div></div>${LEARN[l.id]?`<p style="margin-top:18px">Need more than a summary? <button class="sm" data-jump="learn-${l.id}">Go to the walkthroughs ↓</button></p>`:''}</div>
  ${LEARN[l.id]?`<div class="band" id="learn-${l.id}">${LEARN[l.id].map(m=>m.html).join('')}</div>`:''}
  ${PR[l.id]?practiceHTML(l.id):''}</section>`).join('');
-$$('[data-eq]').forEach(e=>{const v=e.dataset.eq;e.innerHTML=eqHTML(v==='all'?'all':v.split(','))});
+$$('[data-eq]').forEach(e=>{const v=e.dataset.eq;e.innerHTML=eqHTML(v==='all'?'all':v.split(','),v.split(',').includes('v'))});
 
 function route(){
   const id=(location.hash||'#home').slice(1);
@@ -880,7 +885,7 @@ addEventListener('hashchange',route);
 
 /* ---------- home: hero equation + question cards ---------- */
 $('#heroEq').innerHTML=eqHTML([],1);
-$('#qcards').innerHTML=Object.entries(Q).map(([k,v])=>`<div class="card qcard" data-k="${k}" tabindex="0"><div class="tag">${v.tag}</div><h3>${v.q}</h3><p style="font-size:15px;color:var(--mute)">${v.d}</p><ul>${k==='v'?`<li><a data-jump="lecture-0" role="button" tabindex="0" style="cursor:pointer"><span class="num">0</span>The basics of asset valuation ↓</a></li><li><a data-jump="arrows-0" role="button" tabindex="0" style="cursor:pointer"><span class="num">0</span>Why future cash is worth less ↓</a></li>`:''}${L.filter(l=>l.q.includes(k)&&!l.full).map(l=>`<li><a href="#${l.id}"><span class="num">${l.n}</span>${l.t}</a></li>`).join('')}</ul></div>`).join('');
+$('#qcards').innerHTML=Object.entries(Q).map(([k,v])=>`<div class="card qcard" data-k="${k}" tabindex="0"><div class="tag">${v.tag}</div><h3>${v.q}</h3><p style="font-size:15px;color:var(--mute)">${v.d}</p><ul>${L.filter(l=>l.q.includes(k)&&!l.full).map(l=>`<li><a href="#${l.id}"><span class="num">${l.n}</span>${l.t}</a></li>`).join('')}</ul></div>`).join('');
 const hlHero=k=>$$('#heroEq .pc').forEach(p=>p.classList.toggle('hl',p.dataset.k===k));
 $$('.qcard').forEach(c=>{c.addEventListener('mouseenter',()=>hlHero(c.dataset.k));c.addEventListener('focusin',()=>hlHero(c.dataset.k));c.addEventListener('mouseleave',()=>hlHero(null))});
 $$('#heroEq .pc').forEach(p=>{p.style.cursor='pointer';p.addEventListener('mouseenter',()=>hlHero(p.dataset.k));p.addEventListener('click',()=>$(`.qcard[data-k="${p.dataset.k}"]`).focus())});

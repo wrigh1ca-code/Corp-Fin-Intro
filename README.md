@@ -20,7 +20,7 @@ Every lecture page answers one piece of that equation (what cash flows, how to f
 
 ## Pages
 
-Home (Lecture 0 and the intro) · 1 Free cash flows to the firm · 2 Percentage of sales forecasting · 3 Time value of money · 4 Bonds · 5 Stock valuation · 6 Capital budgeting · 7 Relevant cash flows · 8 Scenario, sensitivity and simulation · 9 Weighted average cost of capital
+Home (the intro and the course map) · 0 The basics of asset valuation · 1 Free cash flows to the firm · 2 Percentage of sales forecasting · 3 Time value of money · 4 Bonds · 5 Stock valuation · 6 Capital budgeting · 7 Relevant cash flows · 8 Scenario, sensitivity and simulation · 9 Weighted average cost of capital
 
 Each topic page has, in order:
 
