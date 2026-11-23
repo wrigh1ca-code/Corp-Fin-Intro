@@ -1,5 +1,7 @@
 # Is It Worth It? — Corporate Finance Review
 
+**Live site:** https://wrigh1ca-code.github.io/Corp-Fin-Intro/
+
 A review and practice site for an executive MBA introduction to corporate finance. Students watch the recorded lectures, then use this site to review key ideas, work through visual walkthroughs, and practice with problems that generate new numbers every time.
 
 The whole course is framed around one question, *is it worth it?*, and one equation:
@@ -32,7 +34,7 @@ Pages are routed by URL hash, e.g. `index.html#wacc`, `index.html#capital-budget
 ## Viewing and publishing
 
 - **Locally:** open `index.html` in a browser.
-- **GitHub Pages:** Settings → Pages → Deploy from a branch → `main` / root. The site will be served at `https://<owner>.github.io/<repo>/`.
+- **GitHub Pages:** served from `main` / root. Every push to `main` republishes the site within a minute or two.
 
 ## Editing
 
