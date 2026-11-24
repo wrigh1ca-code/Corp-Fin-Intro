@@ -11,5 +11,5 @@ Source: instructor's case write-up and solutions workbook (not stored in this re
 - Results (match workbook): NPV $9,685.82; IRR 10.93%; payback 9.06 years; discounted payback 13.77 years
 
 Used on: Lecture 8 (scenario, sensitivity, simulation) and Lecture 6 Lab 1 preset.
-Scenario, tornado (±20%) and simulation distributions are illustrative choices layered on the case.
+Scenario, tornado (±20%) and simulation distributions are illustrative choices layered on the case. Simulation random inputs: electricity price growth N(4%, slider sd, default 1.5%) and year-1 solar production N(13,453 kWh, 1,000 kWh).
 The Lecture 3 "Flathead Lake" solar practice problem is a separate, simpler problem.
